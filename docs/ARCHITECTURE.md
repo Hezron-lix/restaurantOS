@@ -20,10 +20,22 @@ We strictly separate our components by domain:
 - **`components/shared/`**: Layout and structural components used across different routing contexts.
 
 ### State Management
-Currently, state management is kept as local as possible.
-- **Local State**: Managed via `useState` and `useReducer` in React.
-- **Server State**: Will be managed by Next.js Server Actions and React Query (or similar caching layers) as backend integrations begin.
-- **Global UI State**: Minimal context providers for theme, authentication status, and high-level layout toggles.
+State management is strictly divided to prevent overlapping responsibilities:
+- **React Server Components**: Secure initial data fetching (session, basic profiles).
+- **React Query**: All asynchronous server state on the client. Handles caching, background refetching, and pagination.
+- **Zustand**: Complex, synchronous global UI state (e.g., Command Palette state, POS active tickets).
+- **React Context**: Dependency injection for singleton providers that rarely change (Theme, Session).
+
+### Provider Hierarchy
+We split providers to keep the marketing site lightweight:
+- **Root Layout**: `ThemeProvider`, `QueryClientProvider`, `ToastProvider`
+- **Staff Layout**: `AuthProvider`, `RestaurantProvider`, `RealtimeProvider`, `CommandPaletteProvider`
+
+### Application Infrastructure
+- **Permission Model**: Fine-grained permissions (e.g., `view:orders`) mapped to roles in `config/permissions.ts`. Enforced via `usePermissions` and `PermissionGuard`.
+- **Feature Flags**: Local flags (e.g., `enable_ai_assistant`) defined in `config/flags.ts` to toggle modules without code changes.
+- **Event System**: A lightweight pub/sub event bus (`lib/events.ts`) for isolated cross-component communication (e.g., `TICKET_BUMPED`) without triggering full React renders.
+- **Error Strategy**: Isolated `ErrorBoundary` components for modules, complemented by Next.js `error.tsx` (route boundaries) and `global-error.tsx` (critical app crashes).
 
 ### Animation Architecture
 Animations in RestaurantOS are tiered based on complexity and required performance:

@@ -9,6 +9,8 @@
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { StaffHeader } from '@/components/layout/StaffHeader';
+import { StaffSidebar } from '@/components/layout/StaffSidebar';
+import { StaffProviders } from '@/components/providers/staff-providers';
 import type { UserRole } from '@/types/database';
 
 export default async function StaffLayout({
@@ -34,14 +36,24 @@ export default async function StaffLayout({
   const userRole = (profile?.role ?? 'guest') as UserRole;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <StaffHeader
-        userName={userName}
-        userRole={userRole}
-      />
-      <main className="flex-1 flex flex-col">
-        {children}
-      </main>
-    </div>
+    <StaffProviders initialSession={{ user, profile }}>
+      <div className="min-h-screen flex">
+        {/* Sidebar is persistent on the left */}
+        <StaffSidebar />
+        
+        {/* Main content area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <StaffHeader
+            userName={userName}
+            userRole={userRole}
+          />
+          <main className="flex-1 overflow-auto bg-zinc-950 p-6">
+            <div className="max-w-screen-2xl mx-auto h-full">
+              {children}
+            </div>
+          </main>
+        </div>
+      </div>
+    </StaffProviders>
   );
 }

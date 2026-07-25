@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/toast';
+import { RootProviders } from '@/components/providers/root-providers';
 import './globals.css';
 
 const geistSans = Geist({
@@ -36,10 +37,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full bg-background text-foreground">
-        <TooltipProvider>
-          {children}
-        </TooltipProvider>
-        <Toaster />
+        <RootProviders>
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
+          <Toaster />
+        </RootProviders>
       </body>
     </html>
   );

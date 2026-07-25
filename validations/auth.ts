@@ -34,3 +34,12 @@ export const updateProfileRoleSchema = z.object({
   new_role: roleSchema,
 });
 export type UpdateProfileRoleInput = z.infer<typeof updateProfileRoleSchema>;
+
+/**
+ * Schema for user login.
+ */
+export const loginSchema = z.object({
+  email: z.string().email({ message: 'Invalid email address.' }),
+  password: z.string().min(1, { message: 'Password is required.' }),
+});
+export type LoginInput = z.infer<typeof loginSchema>;
