@@ -1,96 +1,54 @@
-# 🏗️ RestaurantOS: System Architecture & Technical Specifications
-**Architectural Blueprint & Real-Time Topology (Immutable Contract)**
+# Architecture
 
----
+This document describes the high-level architecture of RestaurantOS.
 
-## 1. Architectural Philosophy
+## Frontend Architecture
 
-The **RestaurantOS** platform is architected around a **Lean, Modular, and Demo-Optimized** structural model built upon Next.js 15, TypeScript, Tailwind CSS, TanStack Query, and Supabase. 
+RestaurantOS is built on **Next.js 15** utilizing the **App Router**.
 
-To maintain peak presentation stability and code clarity during the hackathon evaluation, unnecessary enterprise layers—such as third-party payment gateway webhooks, thermal printer hardware drivers, POS card terminal hooks, custom event buses (Kafka/RabbitMQ), and distributed microservices—are completely excluded. All features are encapsulated inside a highly cohesive monolithic SaaS architecture utilizing modern serverless edge standards.
+### Routing Strategy
+We use Next.js route groups to separate contexts cleanly without polluting the URL structure:
 
----
+- **`app/(public)/`**: The marketing site and landing pages. These are statically generated or server-rendered pages designed for SEO and rapid loading.
+- **`app/(staff)/`**: The authenticated application. Contains the Dashboard, KDS (Kitchen Display System), and POS modules. Heavily utilizes Client Components where interactivity is required.
+- **`app/(dev)/`**: Protected development routes (e.g., component sandboxes, design system viewers) that are conditionally omitted from production builds.
 
-## 2. High-Level System Overview
+### Component Hierarchy
+We strictly separate our components by domain:
+- **`components/ui/`**: Dumb, reusable primitives (e.g., `Button`, `GlassCard`). They carry no business logic and rely entirely on props.
+- **`components/landing/`**: Feature-specific components used only on the public-facing site (e.g., `SequenceHero`).
+- **`components/shared/`**: Layout and structural components used across different routing contexts.
+
+### State Management
+Currently, state management is kept as local as possible.
+- **Local State**: Managed via `useState` and `useReducer` in React.
+- **Server State**: Will be managed by Next.js Server Actions and React Query (or similar caching layers) as backend integrations begin.
+- **Global UI State**: Minimal context providers for theme, authentication status, and high-level layout toggles.
+
+### Animation Architecture
+Animations in RestaurantOS are tiered based on complexity and required performance:
+
+1. **CSS / Tailwind Keyframes (`globals.css`)**: Used for all ambient, idle animations (breathing, slow floating, pulsing glows). These run entirely on the GPU and do not block the main thread.
+2. **Framer Motion**: Used for micro-interactions, layout transitions, and simple scroll-triggered entrance animations (e.g., our `InView` component).
+3. **GSAP & ScrollTrigger**: Reserved strictly for complex, master-timeline narrative scrolling (such as the landing page hero sequence). We isolate GSAP logic into specific wrapper components to prevent conflicts with React's render cycle.
+
+## Future Backend Integration
+
+As we move past the UI/UX foundation, the application will integrate with **Supabase** for:
+- **Authentication**: Role-based access control (Manager, Kitchen Staff, Waitstaff).
+- **Database**: PostgreSQL for relational data mapping of tables, orders, and inventory.
+- **Real-time**: Supabase Realtime subscriptions to push updates directly to the KDS and POS in milliseconds.
 
 ```mermaid
 graph TD
-    subgraph Client Layer [Frontend Viewports & Roles]
-        C_UI[Customer QR App / Mobile]
-        K_UI[Kitchen Display System - KDS]
-        W_UI[Waiter Coordination Console]
-        P_UI[Cashier Billing Terminal]
-        M_UI[Manager Analytics & AI Dashboard]
-    end
-
-    subgraph Application & Router Layer [Next.js 15 App Router]
-        SC[React Server Components - RSC]
-        SA[Server Actions + Zod Validation]
-        CC[Client Components + TanStack Query]
-        API[REST Webhooks & Seed Routes]
-    end
-
-    subgraph Persistence & Realtime Layer [Supabase Cloud Stack]
-        PG[(PostgreSQL Database)]
-        RLS[Row-Level Security Policies]
-        CDC[Realtime WebSocket Engine - CDC]
-        AI_E[Asynchronous AI Operational Helper]
-    end
-
-    C_UI & K_UI & W_UI & P_UI & M_UI -->|Submits Forms & Mutations| SA
-    C_UI & K_UI & W_UI & P_UI & M_UI -->|Optimistic Cache Reads| CC
-    CC -->|Realtime Subscriptions| CDC
-    SA -->|Secure Transaction Queries| RLS --> PG
-    SC -->|Direct Read-Only Dashboard Stats| PG
-    PG -->|Database Mutation Broadcasts| CDC
-    AI_E -->|Evaluates Daily Order & Stock Velocity| PG
+    Client[Client Browser / Tablet] -->|Next.js App Router| AuthMiddleware{Auth Middleware}
+    AuthMiddleware -->|Unauthenticated| PublicRoute[app/\(public\)]
+    AuthMiddleware -->|Authenticated| StaffRoute[app/\(staff\)]
+    StaffRoute -->|Server Actions| SupabaseDB[(Supabase PostgreSQL)]
+    SupabaseDB -.->|Real-time WebSockets| StaffRoute
 ```
 
----
-
-## 3. Hybrid Rendering Model (Next.js 15)
-
-Our application strictly enforces boundary separation between Server and Client rendering:
-
-### React Server Components (RSC)
-- **Primary Domain**: Executive Manager Dashboard, Daily Analytics summaries, Menu catalog structure, and Static layouts.
-- **Execution**: Run exclusively on server infrastructure. They directly query PostgreSQL database tables via server-side utilities without exposing database credentials or adding query logic to client bundles.
-
-### Client Components (Interactive & Real-Time Surfaces)
-- **Primary Domain**: Kitchen Display System (KDS), Waiter alert feeds, Cashier checkout tables, and Customer interactive order builders.
-- **Execution**: Marked with `"use client"`. They manage local interactive UI transitions (powered by Framer Motion), maintain TanStack Query cache synchronization, and listen directly to Supabase Realtime WebSocket streams.
-
----
-
-## 4. Data Mutation & Validation Strategy
-
-We supersede legacy REST endpoints by standardizing on **React Server Actions** for all user interface form mutations:
-1. **Input Boundary Validation**: Every Server Action input payload must be evaluated by a rigorous TypeScript Zod runtime schema located within the `validations/` directory.
-2. **Server Execution**: Once validated, the Server Action invokes specific business service wrappers in `services/` that execute type-safe SQL queries or Supabase client mutations.
-3. **Cache Invalidation & Realtime Sync**: Successful database mutations automatically fire PostgreSQL Change Data Capture (CDC) events over webhooks while simultaneously triggering Next.js path re-evaluations via `revalidatePath` and TanStack Query query-key invalidations.
-
----
-
-## 5. Realtime WebSocket Channel Topology
-
-To ensure our target of sub-100ms operational synergy across all five dining room personas, Supabase Realtime broadcasts across three dedicated subscription channels:
-- `orders:live`: Streams inserts and updates from the `orders` and `order_items` tables directly to the Kitchen Display System (KDS) and Cashier billing terminals.
-- `notifications:alerts`: Streams targeted operational alerts (e.g., dish prep completed, waiter table calls, AI operational insights) to designated role consoles.
-- `tables:status`: Streams real-time table status transitions (`AVAILABLE` ↔ `RESERVED` ↔ `SEATED` ↔ `DIRTY`) across all floor staff viewports simultaneously.
-
----
-
-## 6. Directory Structure & Domain Separation
-
-Our codebase enforces zero circular dependencies across clean enterprise folders:
-- `app/`: Next.js 15 App Router routing trees, layout boundaries, and error handlers.
-- `actions/`: Domain-isolated React Server Actions (`orders.ts`, `tables.ts`, `kitchen.ts`, `billing.ts`).
-- `components/`: Modular domain interface assemblies and atomic `shadcn/ui` foundational elements.
-- `config/`: Application environment settings, UI state enums, and workflow finite state machine constants.
-- `docs/`: Immutable technical architecture and evaluation contract specifications.
-- `hooks/`: Declarative client-side React hooks for TanStack Query execution and WebSocket channels.
-- `lib/`: Utility formatting functions, class merging helpers, and static calculation helpers.
-- `services/`: Encapsulated database access layers and external integrations.
-- `supabase/`: Database migration SQL models, seeding demo scripts, and authentication rules.
-- `types/`: Comprehensive TypeScript interfaces reflecting strict database entities.
-- `validations/`: Standalone Zod runtime boundary validation contracts.
+## Scalability Considerations
+- **Edge Deployment**: Next.js allows us to push marketing pages to the Edge, ensuring instant loads globally.
+- **Database Indexing**: Orders and transactional tables will be heavily indexed.
+- **Asset Optimization**: The massive 269-frame GSAP canvas is heavily optimized, loading frames iteratively so the user is not blocked.
