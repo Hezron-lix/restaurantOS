@@ -1,110 +1,84 @@
-# 🍽️ Smart Restaurant Management System (Restaurant OS)
+# 🍽️ RestaurantOS: Smart Restaurant Management System
 
-> A production-grade SaaS operating system designed to solve real operational bottlenecks inside restaurants through synchronized workflows, real-time coordination, and AI-powered operational insights. Built for the **Smart Restaurant Management System Hackathon**.
-
----
-
-## 🌟 Product Vision & Architecture
-
-Unlike traditional customer-facing food delivery applications, **Restaurant OS** targets the core operational complexities of modern dine-in and hybrid restaurant operations. By bridging communication between floor staff, kitchen teams, managers, and customers, the platform delivers instantaneous synchronization across all stakeholders.
-
-### Core Modules Supported
-- 📱 **QR Menu & Live Menu Availability**: Instantaneous digital menu rendering with real-time dish out-of-stock updates driven by kitchen workflows.
-- 📅 **Reservation Management & Table Allocation**: Intelligent guest seating and turnaround predictability.
-- ⚡ **Real-time Order Synchronization**: Immediate routing of orders from guest tables and servers directly to specialized kitchen stations.
-- 🍳 **Kitchen Display System (KDS)**: Optimized cooking ticket management, preparation timers, and dietary restriction flagging.
-- 🧑‍🍳 **Waiter Coordination Console**: Automated alerting for ready-to-serve orders, table assistance calls, and dynamic task routing.
-- 💳 **Cashier Billing & POS Terminal**: Rapid checkout, bill split calculations, and integrated receipt generation.
-- 📊 **Manager Executive Analytics**: Granular performance tracking of table turnover, peak hours, menu engineering metrics, and revenue velocity.
-- 🤖 **AI-Powered Operational Assistant**: Data-driven managerial insights predicting inventory replenishment, staffing requirements, and bottleneck identification.
+> An innovative, AI-powered Restaurant Operating System built for the **Smart Restaurant Management System Hackathon**. Designed to eradicate traditional back-of-house bottlenecks through real-time multi-role synchronization and proactive AI operational intelligence.
 
 ---
 
-## 🏗️ Technical Stack
+## 🌟 Product Vision & Scope Philosophy
 
-This project follows enterprise SaaS engineering standards, structured around modern performance, maintainability, and developer experience best practices:
-
-- **Framework**: [Next.js 15+](https://nextjs.org/) (App Router, Server Actions, React React Server Components)
-- **Language**: [TypeScript](https://www.typescriptlang.org/) in strict mode
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + Custom CSS Design System
-- **UI Architecture**: [shadcn/ui](https://ui.shadcn.com/) & [Lucide Icons](https://lucide.dev/)
-- **Animation & Transitions**: [Framer Motion](https://www.framer.com/motion/) for responsive micro-interactions
-- **State & Data Fetching**: [TanStack Query (v5)](https://tanstack.com/query/latest) for declarative asynchronous state & cache management
-- **Forms & Validation**: [React Hook Form](https://react-hook-form.com/) integrated with [Zod](https://zod.dev/) schemas
-- **Backend & Realtime Engine**: [Supabase](https://supabase.com/) (PostgreSQL, Realtime WebSockets, Authentication, Storage, Edge Functions)
-- **Code Quality & Linting**: [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/)
+Unlike consumer food delivery apps or monolithic enterprise ERPs, **RestaurantOS** optimizes strictly for **Demo-First Operational Excellence** within a single restaurant operational environment. By uniting customers, waiters, kitchen chefs, cashiers, and restaurant executives onto a synchronized sub-100ms feedback loop, RestaurantOS transforms reactive restaurant management into intelligent, predictive execution.
 
 ---
 
-## 📁 Repository Directory Structure
+## 🏛️ Immutable Architecture & Technical Specifications
 
-The project strictly embraces modular separation of concerns and maintainability across scalable multi-tenant architecture:
+This project strictly binds feature implementation to our authoritative set of immutable architectural engineering contracts documented inside the [`docs/`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs) directory:
+
+- [`PROJECT.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/PROJECT.md) — Product vision, problem statement, single-restaurant scope, goals, and user roles.
+- [`ARCHITECTURE.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/ARCHITECTURE.md) — Next.js 15 App Router hybrid rendering, React Server Actions, and Supabase Realtime WebSocket topology.
+- [`DATABASE.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DATABASE.md) — Strict 3NF relational schema covering the 12 essential operational tables, cent-based integer currency pricing, and Row-Level Security (RLS) enforcement.
+- [`API.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/API.md) — RPC over REST architecture, Server Action domain boundaries, and unified Zod runtime error validation envelopes.
+- [`WORKFLOWS.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/WORKFLOWS.md) — Complete 10-step demo journey and deterministic Finite State Machines (FSMs) for tables and order tickets.
+- [`UI_GUIDELINES.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/UI_GUIDELINES.md) — Codified inviolable **UI Rule** reserving visual identity to user direction, target hardware viewports, and Framer Motion interaction standards.
+- [`DEVELOPMENT.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DEVELOPMENT.md) — SOLID & DRY engineering governance, strict TypeScript rules, TanStack Query optimistic updates, and Git conventional commit rules.
+- [`AI.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/AI.md) — High-impact operational AI focused exclusively on predictive inventory depletion and manager demand analytics (no generic conversational chatbots).
+- [`DEMO.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DEMO.md) — Deterministic 5-minute live hackathon presentation script evaluating all five dining roles without fake delays or mocked data.
+- [`PRODUCT_DECISIONS.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/PRODUCT_DECISIONS.md) — Comprehensive Architectural Decision Records (ADRs), lean tradeoff justifications, and future multi-tenant escalation strategies.
+
+---
+
+## 🏗️ Modern SaaS Directory Architecture
+
+The repository enforces clean domain decoupling across production standard directories:
 
 ```text
-├── .github/          # CI/CD pipelines, issue templates, and workflow automations
-├── app/              # Next.js App Router root layouts, pages, API routes, and error boundaries
-├── components/       # Domain and atomic UI components (modular, accessible, reusable)
-│   └── ui/           # shadcn/ui generic primitive design components
-├── docs/             # Technical architectural specifications and onboarding documentation
-├── hooks/            # Reusable custom React hooks and local state logic
-├── lib/              # Client utilities, stateless helpers, formatting, and design system tokens
-├── public/           # Static media assets, icons, logos, and manifest files
-├── services/         # Encapsulated backend integration layers, queries, and external APIs
-├── supabase/         # Database migration schemas, seed data, edge functions, and local DB configs
-├── types/            # Centralized TypeScript interface contracts and robust Zod schema models
-├── .env.example      # Sample production-safe environment variable mapping
-└── README.md         # Primary project architecture reference (this document)
+├── .github/          # CI/CD workflows, automation scripts, and issue templates
+├── actions/          # Domain-isolated Next.js 15 React Server Actions (Orders, KDS, Billing)
+├── app/              # Next.js App Router layout layouts, root viewports, and API webhooks
+├── components/       # Domain interface component assemblies and atomic shadcn/ui elements
+│   └── ui/           # Generic baseline shadcn/ui design primitives
+├── config/           # Centralized system configurations, FSM enums, and operational constants
+├── docs/             # Immutable engineering contracts and system specification blueprints
+├── hooks/            # Reusable declarative client hooks for TanStack Query & real-time sockets
+├── lib/              # Client utilities, class merging (`cn`), and stateless calculation helpers
+├── public/           # Static media assets, branding icons, and web app manifest files
+├── services/         # Encapsulated Supabase PostgreSQL query builders and AI wrappers
+├── supabase/         # Database migrations, seed scripts, edge helpers, and auth policies
+├── types/            # Strict TypeScript interfaces reflecting relational database entities
+├── validations/      # Runtime Zod validation boundaries shared across forms and server actions
+├── .env.example      # Sample production credentials and AI key configuration template
+└── README.md         # Primary engineering overview reference (this document)
 ```
 
 ---
 
-## 🚀 Getting Started (Local Development)
+## 🚀 Quickstart & Development Workflow
 
-### 1. Prerequisites
-Ensure your development environment is provisioned with:
-- **Node.js** v20+ or newer
-- **npm**, **pnpm**, or **bun** package manager
-- Git configuration and SSH/HTTPS repository access
+### Prerequisites
+- Node.js v20+ and npm / pnpm / bun.
+- Supabase account with configured PostgreSQL project credentials.
 
-### 2. Initial Setup
-1. **Clone the repository:**
+### Installation
+1. **Clone & Install Dependencies:**
    ```bash
-   git clone <your-repo-url>
+   git clone <repository-url>
    cd restaurant-os
-   ```
-2. **Install project dependencies:**
-   ```bash
    npm install
    ```
-3. **Configure Environment Credentials:**
-   Copy the provided example variable document to establish local config:
+2. **Configure Environment Secrets:**
    ```bash
    cp .env.example .env.local
    ```
-   *Modify `.env.local` to incorporate your corresponding Supabase instance secrets and API endpoints.*
+   *Populate `.env.local` with corresponding Supabase database URLs and AI keys.*
 
-4. **Launch Development Server:**
+3. **Verify Linter & Start Development Server:**
    ```bash
+   npm run lint
    npm run dev
    ```
-   Access the system via `http://localhost:3000`.
-
----
-
-## 📚 Technical Documentation & Specifications
-
-Comprehensive architectural specifications are actively developed in Phase 0.5 within the [`docs/`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs) directory:
-- [`PROJECT.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/PROJECT.md): Executive summary, scope, goals, and role definitions.
-- [`ARCHITECTURE.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/ARCHITECTURE.md): Multi-layer system design, boundary decoupling, and real-time topology.
-- [`DATABASE.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DATABASE.md): PostgreSQL relational schemas, row-level security (RLS), and indexing strategies.
-- [`API.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/API.md): Endpoint routing, payload formats, error hierarchies, and real-time channels.
-- [`WORKFLOWS.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/WORKFLOWS.md): Cross-role sequence transitions and transactional lifecycle modeling.
-- [`UI_GUIDELINES.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/UI_GUIDELINES.md): Component styling architecture, aesthetic mandates, and interaction principles.
-- [`DEVELOPMENT.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DEVELOPMENT.md): Contribution protocols, git workflows, testing standards, and review checklists.
-- [`AI.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/AI.md): Generative AI integrations, prompt engineering models, and predictive operational insights.
-- [`DEMO.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DEMO.md): Hackathon evaluation walkthrough and deterministic presentation scripting.
+   Open `http://localhost:3000` to inspect application status. Note: Feature page layouts remain unconstructed pending authoritative visual design instructions.
 
 ---
 
 ## ⚖️ License
-This project is proprietary and built specifically for the Smart Restaurant Management System Hackathon. All rights reserved.
+Proprietary engineering blueprint developed for the Smart Restaurant Management System Hackathon. All rights reserved.
