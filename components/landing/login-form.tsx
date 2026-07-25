@@ -8,10 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TextEffect } from "@/components/ui/text-effect";
 import { loginSchema, type LoginInput } from "@/validations/auth";
+import { loginWithEmail } from "@/app/actions/auth";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function LoginForm() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -23,14 +27,29 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginInput) => {
     setIsLoading(true);
-    setError(null);
+    
     try {
-      // TODO: Connect to Supabase Auth
-      console.log("Login data:", data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // throw new Error("Not implemented yet");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred during login.");
+      const response = await loginWithEmail(data);
+      
+      if (!response.success) {
+        toast.error("Login failed", {
+          description: response.error.message,
+        });
+        return;
+      }
+
+      toast.success("Welcome back", {
+        description: "Redirecting to your dashboard...",
+      });
+      
+      // Let layout.tsx handle the onboarding redirect
+      router.push("/dashboard");
+      router.refresh();
+      
+    } catch {
+      toast.error("Error", {
+        description: "An unexpected error occurred. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +87,12 @@ export function LoginForm() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">Password</label>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-zinc-300">Password</label>
+              <Link href="/forgot-password" className="text-xs text-brand hover:text-brand/80 transition-colors">
+                Forgot password?
+              </Link>
+            </div>
             <Input
               {...register("password")}
               type="password"
@@ -81,7 +105,7 @@ export function LoginForm() {
             )}
           </div>
 
-          {error && <p className="text-sm text-destructive font-medium">{error}</p>}
+
 
           <Button
             type="submit"

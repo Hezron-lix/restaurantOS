@@ -1,0 +1,119 @@
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { GlassCard } from "@/components/ui/glass-card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { TextEffect } from "@/components/ui/text-effect";
+import { resetPasswordAction } from "@/app/actions/auth";
+import { toast } from "sonner";
+import Link from "next/link";
+import { z } from "zod";
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+
+export function ForgotPasswordForm() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ForgotPasswordInput>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
+
+  const onSubmit = async (data: ForgotPasswordInput) => {
+    setIsLoading(true);
+    
+    try {
+      const response = await resetPasswordAction(data.email);
+      
+      if (!response.success) {
+        toast.error("Error", {
+          description: response.error.message,
+        });
+        return;
+      }
+
+      toast.success("Recovery Email Sent", {
+        description: response.message,
+      });
+      setIsSuccess(true);
+      
+    } catch {
+      toast.error("Error", {
+        description: "An unexpected error occurred. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <GlassCard className="w-full max-w-md p-8 relative overflow-hidden">
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-brand to-transparent opacity-50" />
+      <div className="absolute -top-24 -inset-x-24 h-48 bg-brand/10 blur-[100px] pointer-events-none" />
+
+      <div className="relative z-10">
+        <h1 className="text-3xl font-semibold tracking-tight mb-2 text-zinc-100">
+          <TextEffect preset="blur" per="char">
+            Reset password
+          </TextEffect>
+        </h1>
+        <p className="text-sm text-zinc-400 mb-8 font-light">
+          Enter your email address and we will send you a link to reset your password.
+        </p>
+
+        {isSuccess ? (
+          <div className="space-y-6">
+            <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm">
+              If an account matches that email, we have sent a password reset link. Please check your inbox.
+            </div>
+            <Link href="/login" className="block">
+              <Button variant="outline" className="w-full h-12 rounded-xl border-white/10 hover:bg-white/5">
+                Return to Login
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-zinc-300">Email Address</label>
+              <Input
+                {...register("email")}
+                type="email"
+                placeholder="manager@restaurant.com"
+                className="bg-zinc-900/50 border-white/10 h-12 rounded-xl focus-visible:ring-brand focus-visible:border-brand/50"
+                disabled={isLoading}
+              />
+              {errors.email && (
+                <p className="text-sm text-destructive mt-1">{errors.email.message}</p>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-12 rounded-xl bg-brand text-brand-foreground hover:bg-brand/90 transition-all shadow-[0_0_30px_-5px_rgba(234,179,8,0.3)] active:scale-[0.98]"
+            >
+              {isLoading ? "Sending..." : "Send Reset Link"}
+            </Button>
+
+            <div className="text-center mt-6">
+              <Link href="/login" className="text-sm text-zinc-400 hover:text-zinc-200 transition-colors">
+                Back to login
+              </Link>
+            </div>
+          </form>
+        )}
+      </div>
+    </GlassCard>
+  );
+}

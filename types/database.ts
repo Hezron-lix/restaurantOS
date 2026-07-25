@@ -40,8 +40,24 @@ export type ProfileRecord = {
   email: string;
   full_name: string;
   role: UserRole;
+  restaurant_id: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type RestaurantRecord = {
+  id: string;
+  name: string;
+  slug: string;
+  logo_url: string | null;
+  phone: string | null;
+  email: string | null;
+  address: string | null;
+  city: string | null;
+  country: string | null;
+  timezone: string;
+  currency: string;
+  created_at: string;
 };
 
 export type MenuCategoryRecord = {
@@ -167,10 +183,27 @@ export type ProfileInsert = {
   email: string;
   full_name: string;
   role?: UserRole;
+  restaurant_id?: string | null;
   created_at?: string;
   updated_at?: string;
 };
 export type ProfileUpdate = Partial<ProfileInsert>;
+
+export type RestaurantInsert = {
+  id?: string;
+  name: string;
+  slug: string;
+  logo_url?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  city?: string | null;
+  country?: string | null;
+  timezone?: string;
+  currency?: string;
+  created_at?: string;
+};
+export type RestaurantUpdate = Partial<RestaurantInsert>;
 
 export type MenuCategoryInsert = {
   id?: string;
@@ -312,6 +345,12 @@ export type Relationship = {
 export type Database = {
   public: {
     Tables: {
+      restaurants: {
+        Row: RestaurantRecord;
+        Insert: RestaurantInsert;
+        Update: RestaurantUpdate;
+        Relationships: Relationship[];
+      };
       profiles: {
         Row: ProfileRecord;
         Insert: ProfileInsert;

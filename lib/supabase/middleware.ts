@@ -35,14 +35,13 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // In RestaurantOS, the (staff) route group requires authentication.
   // We'll protect any route that's not explicitly public.
-  // Wait, let's just protect common staff prefixes like /dashboard, /pos, /kds, /kitchen, /inventory
-  const protectedRoutes = ['/dashboard', '/pos', '/kds', '/kitchen', '/inventory', '/tables'];
+  const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password', '/showcase'];
   
-  const isProtectedRoute = protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route));
+  // Also protect the onboarding route
+  const isPublicRoute = publicRoutes.includes(request.nextUrl.pathname);
 
-  if (!user && isProtectedRoute) {
+  if (!user && !isPublicRoute) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = '/login';
     return NextResponse.redirect(loginUrl);

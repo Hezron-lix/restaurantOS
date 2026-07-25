@@ -3,15 +3,19 @@
 import * as React from "react";
 import type { User } from "@supabase/supabase-js";
 
+import type { RestaurantRecord } from "@/types/database";
+
 // Context definitions for the application shell
 type AuthContextType = { user: User | null; profile: Record<string, unknown> | null };
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
-type RestaurantContextType = { restaurantId: string | null; setRestaurantId: (id: string) => void };
+type RestaurantContextType = { 
+  restaurant: RestaurantRecord | null; 
+  setRestaurant: (restaurant: RestaurantRecord) => void 
+};
 const RestaurantContext = React.createContext<RestaurantContextType | undefined>(undefined);
 
-type CommandPaletteContextType = { isOpen: boolean; setIsOpen: (v: boolean) => void };
-const CommandPaletteContext = React.createContext<CommandPaletteContextType | undefined>(undefined);
+
 
 // Providers
 export function AuthProvider({ children, initialSession }: { children: React.ReactNode; initialSession: AuthContextType }) {
@@ -27,13 +31,21 @@ export function useAuth() {
   return context;
 }
 
-export function RestaurantProvider({ children }: { children: React.ReactNode }) {
-  const [restaurantId, setRestaurantId] = React.useState<string | null>(null);
+export function RestaurantProvider({ children, initialRestaurant }: { children: React.ReactNode, initialRestaurant: RestaurantRecord | null }) {
+  const [restaurant, setRestaurant] = React.useState<RestaurantRecord | null>(initialRestaurant);
   return (
-    <RestaurantContext.Provider value={{ restaurantId, setRestaurantId }}>
+    <RestaurantContext.Provider value={{ restaurant, setRestaurant }}>
       {children}
     </RestaurantContext.Provider>
   );
+}
+
+export function useRestaurant() {
+  const context = React.useContext(RestaurantContext);
+  if (context === undefined) {
+    throw new Error("useRestaurant must be used within a RestaurantProvider");
+  }
+  return context;
 }
 
 export function RealtimeProvider({ children }: { children: React.ReactNode }) {
@@ -48,38 +60,23 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-export function CommandPaletteProvider({ children }: { children: React.ReactNode }) {
-  const [isOpen, setIsOpen] = React.useState(false);
-  
-  // Listen for Cmd+K globally
-  React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setIsOpen((open) => !open);
-      }
-    };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
 
-  return (
-    <CommandPaletteContext.Provider value={{ isOpen, setIsOpen }}>
-      {children}
-      {/* Command Palette UI would render here if isOpen is true */}
-    </CommandPaletteContext.Provider>
-  );
-}
 
 // Master Provider for Staff Shell
-export function StaffProviders({ children, initialSession }: { children: React.ReactNode; initialSession: AuthContextType }) {
+export function StaffProviders({ 
+  children, 
+  initialSession, 
+  initialRestaurant 
+}: { 
+  children: React.ReactNode; 
+  initialSession: AuthContextType;
+  initialRestaurant?: RestaurantRecord;
+}) {
   return (
     <AuthProvider initialSession={initialSession}>
-      <RestaurantProvider>
+      <RestaurantProvider initialRestaurant={initialRestaurant ?? null}>
         <RealtimeProvider>
-          <CommandPaletteProvider>
-            {children}
-          </CommandPaletteProvider>
+          {children}
         </RealtimeProvider>
       </RestaurantProvider>
     </AuthProvider>

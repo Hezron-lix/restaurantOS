@@ -10,8 +10,10 @@ import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { StaffHeader } from '@/components/layout/StaffHeader';
 import { StaffSidebar } from '@/components/layout/StaffSidebar';
+import { Workspace } from '@/components/layout/Workspace';
 import { StaffProviders } from '@/components/providers/staff-providers';
-import type { UserRole } from '@/types/database';
+import { CommandPalette } from '@/components/shell/CommandPalette';
+import type { UserRole, RestaurantRecord } from '@/types/database';
 
 export default async function StaffLayout({
   children,
@@ -28,32 +30,49 @@ export default async function StaffLayout({
   // Fetch profile for display name and role
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, role')
+    .select('full_name, role, restaurant_id')
     .eq('id', user.id)
     .single();
 
   const userName = profile?.full_name ?? user.email ?? 'Staff';
   const userRole = (profile?.role ?? 'guest') as UserRole;
 
+  // Restaurant Check
+  // If the user has no restaurant_id, they haven't been assigned to a restaurant.
+  if (!profile?.restaurant_id) {
+    redirect('/onboarding');
+  }
+
+  // Fetch the restaurant
+  const { data: restaurant } = await supabase
+    .from('restaurants')
+    .select('*')
+    .eq('id', profile.restaurant_id)
+    .single();
+
+  if (!restaurant) {
+    // Failsafe in case restaurant was deleted but profile wasn't updated
+    redirect('/onboarding');
+  }
+
   return (
-    <StaffProviders initialSession={{ user, profile }}>
-      <div className="min-h-screen flex">
+    <StaffProviders initialSession={{ user, profile }} initialRestaurant={restaurant as RestaurantRecord}>
+      <div className="min-h-screen flex bg-background text-foreground">
         {/* Sidebar is persistent on the left */}
         <StaffSidebar />
         
         {/* Main content area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden relative">
           <StaffHeader
             userName={userName}
             userRole={userRole}
           />
-          <main className="flex-1 overflow-auto bg-zinc-950 p-6">
-            <div className="max-w-screen-2xl mx-auto h-full">
-              {children}
-            </div>
-          </main>
+          <Workspace>
+            {children}
+          </Workspace>
         </div>
       </div>
+      <CommandPalette />
     </StaffProviders>
   );
 }

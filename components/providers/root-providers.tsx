@@ -5,6 +5,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { DialogProvider } from "./dialog-provider";
+import { Toaster } from "sonner";
 
 export function RootProviders({ children }: { children: React.ReactNode }) {
   const [queryClient] = React.useState(
@@ -31,6 +32,7 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
           {children}
         </DialogProvider>
         <ReactQueryDevtools initialIsOpen={false} />
+        <Toaster theme="system" richColors closeButton position="top-right" />
       </QueryClientProvider>
     </NextThemesProvider>
   );
