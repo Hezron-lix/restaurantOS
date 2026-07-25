@@ -62,6 +62,7 @@ export type RestaurantRecord = {
 
 export type MenuCategoryRecord = {
   id: string;
+  restaurant_id: string | null;
   name: string;
   description: string | null;
   display_order: number;
@@ -94,6 +95,7 @@ export type InventoryRecord = {
 
 export type TableRecord = {
   id: string;
+  restaurant_id: string | null;
   table_number: number;
   capacity: number;
   status: TableStatus;
@@ -114,6 +116,7 @@ export type ReservationRecord = {
 
 export type OrderRecord = {
   id: string;
+  restaurant_id: string | null;
   table_id: string;
   customer_id: string | null;
   waiter_id: string | null;
@@ -174,6 +177,18 @@ export type AnalyticsDailyRecord = {
   most_ordered_item_id: string | null;
 };
 
+export type RestaurantActivityRecord = {
+  id: string;
+  restaurant_id: string;
+  type: string;
+  title: string;
+  description: string | null;
+  icon_name: string | null;
+  color_class: string | null;
+  bg_class: string | null;
+  created_at: string;
+};
+
 // -----------------------------------------------------------------------------
 // 2. EXPLICIT INSERT & UPDATE TYPES
 // -----------------------------------------------------------------------------
@@ -207,6 +222,7 @@ export type RestaurantUpdate = Partial<RestaurantInsert>;
 
 export type MenuCategoryInsert = {
   id?: string;
+  restaurant_id?: string | null;
   name: string;
   description?: string | null;
   display_order?: number;
@@ -242,6 +258,7 @@ export type InventoryUpdate = Partial<InventoryInsert>;
 
 export type TableInsert = {
   id?: string;
+  restaurant_id?: string | null;
   table_number: number;
   capacity: number;
   status?: TableStatus;
@@ -264,6 +281,7 @@ export type ReservationUpdate = Partial<ReservationInsert>;
 
 export type OrderInsert = {
   id?: string;
+  restaurant_id?: string | null;
   table_id: string;
   customer_id?: string | null;
   waiter_id?: string | null;
@@ -329,6 +347,19 @@ export type AnalyticsDailyInsert = {
   most_ordered_item_id?: string | null;
 };
 export type AnalyticsDailyUpdate = Partial<AnalyticsDailyInsert>;
+
+export type RestaurantActivityInsert = {
+  id?: string;
+  restaurant_id: string;
+  type: string;
+  title: string;
+  description?: string | null;
+  icon_name?: string | null;
+  color_class?: string | null;
+  bg_class?: string | null;
+  created_at?: string;
+};
+export type RestaurantActivityUpdate = Partial<RestaurantActivityInsert>;
 
 export type Relationship = {
   foreignKeyName: string;
@@ -421,6 +452,12 @@ export type Database = {
         Row: AnalyticsDailyRecord;
         Insert: AnalyticsDailyInsert;
         Update: AnalyticsDailyUpdate;
+        Relationships: Relationship[];
+      };
+      restaurant_activities: {
+        Row: RestaurantActivityRecord;
+        Insert: RestaurantActivityInsert;
+        Update: RestaurantActivityUpdate;
         Relationships: Relationship[];
       };
     };

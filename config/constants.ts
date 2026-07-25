@@ -12,7 +12,7 @@ export type UserRole = (typeof USER_ROLES)[number];
 /**
  * Table Occupancy Lifecycle States.
  */
-export const TABLE_STATUSES = ['AVAILABLE', 'RESERVED', 'SEATED', 'DIRTY'] as const;
+export const TABLE_STATUSES = ['AVAILABLE', 'RESERVED', 'SEATED', 'PREPARING', 'READY', 'DIRTY', 'CLEANING'] as const;
 export type TableStatus = (typeof TABLE_STATUSES)[number];
 
 /**
@@ -88,8 +88,11 @@ export const VALID_ORDER_TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]
 export const VALID_TABLE_TRANSITIONS: Record<TableStatus, readonly TableStatus[]> = {
   AVAILABLE: ['RESERVED', 'SEATED'],
   RESERVED: ['SEATED', 'AVAILABLE'],
-  SEATED: ['DIRTY'],
-  DIRTY: ['AVAILABLE'],
+  SEATED: ['PREPARING', 'READY', 'DIRTY'],
+  PREPARING: ['READY', 'DIRTY'],
+  READY: ['DIRTY', 'AVAILABLE'],
+  DIRTY: ['CLEANING', 'AVAILABLE'],
+  CLEANING: ['AVAILABLE'],
 };
 
 /**

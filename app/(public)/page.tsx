@@ -112,7 +112,7 @@ export default function PublicPage() {
         </section>
 
         {/* Section: Analytics & AI */}
-        <section className="py-48 md:py-64 relative z-20 bg-black overflow-hidden transition-colors duration-1000">
+        <section id="features" className="py-48 md:py-64 relative z-20 bg-black overflow-hidden transition-colors duration-1000">
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1400px] h-[700px] bg-[radial-gradient(ellipse_at_bottom_center,rgba(16,185,129,0.06)_0%,transparent_70%)] pointer-events-none animate-ambient-shift origin-bottom" style={{ animationDelay: '-10s' }} />
           
           <div className="container mx-auto max-w-7xl px-6 md:px-16 text-center">
@@ -173,7 +173,7 @@ export default function PublicPage() {
                 Modern restaurant operations. One platform.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <Link href="/login" className="w-full sm:w-auto">
+                <Link href="/register" className="w-full sm:w-auto">
                   <Button size="lg" className="glow-brand group text-lg h-14 px-10 w-full sm:w-auto text-white shadow-[0_0_30px_rgba(234,179,8,0.15)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_15px_40px_-5px_rgba(234,179,8,0.4)] active:scale-95 active:shadow-[0_0_20px_rgba(234,179,8,0.2)] animate-breathe">
                     Get Started
                     <ArrowRight className="ml-3 size-5 transition-transform duration-500 ease-out group-hover:translate-x-1" />

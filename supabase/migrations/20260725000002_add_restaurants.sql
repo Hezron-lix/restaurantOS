@@ -31,12 +31,12 @@ USING (
   )
 );
 
-CREATE POLICY "Admins can update their restaurant" 
+CREATE POLICY "Managers can update their restaurant" 
 ON public.restaurants 
 FOR UPDATE 
 USING (
   id IN (
-    SELECT restaurant_id FROM public.profiles WHERE profiles.id = auth.uid() AND role = 'admin'
+    SELECT restaurant_id FROM public.profiles WHERE profiles.id = auth.uid() AND role = 'manager'
   )
 );
 

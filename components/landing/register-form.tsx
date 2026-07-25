@@ -7,8 +7,8 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TextEffect } from "@/components/ui/text-effect";
-import { loginSchema, type LoginInput } from "@/validations/auth";
-import { loginWithEmail } from "@/app/actions/auth";
+import { registerSchema, type RegisterInput } from "@/validations/auth";
+import { registerWithEmail } from "@/app/actions/auth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -18,21 +18,21 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 function getFriendlyAuthError(message: string): string {
   const lower = message.toLowerCase();
   if (lower.includes("rate limit") || lower.includes("email rate limit") || lower.includes("too many requests")) {
-    return "Too many attempts. Supabase has temporarily rate-limited this action. Please wait a few minutes before trying again.";
+    return "Too many sign-up attempts. Supabase has temporarily rate-limited this action. Please wait a few minutes before trying again.";
   }
-  if (lower.includes("invalid login credentials") || lower.includes("invalid email or password")) {
-    return "Incorrect email or password. Please check your credentials and try again.";
+  if (lower.includes("already registered") || lower.includes("user already exists") || lower.includes("email already in use")) {
+    return "An account with this email already exists. Try signing in instead.";
   }
-  if (lower.includes("email not confirmed")) {
-    return "Please confirm your email address before signing in. Check your inbox for a verification link.";
+  if (lower.includes("weak password") || lower.includes("password should be")) {
+    return "Your password is too weak. Please choose a stronger password (at least 6 characters).";
   }
-  if (lower.includes("user not found")) {
-    return "No account found with that email address. Please register first.";
+  if (lower.includes("invalid email")) {
+    return "Please enter a valid email address.";
   }
   return message;
 }
 
-export function LoginForm() {
+export function RegisterForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -40,28 +40,29 @@ export function LoginForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = async (data: LoginInput) => {
+  const onSubmit = async (data: RegisterInput) => {
     // react-hook-form sets isSubmitting=true for the duration of this async fn,
     // which disables the button immediately — no duplicate requests possible.
     try {
-      const response = await loginWithEmail(data);
+      const response = await registerWithEmail(data);
 
       if (!response.success) {
-        toast.error("Login failed", {
+        toast.error("Registration failed", {
           description: getFriendlyAuthError(response.error.message),
-          duration: 6000,
+          duration: 8000,
         });
         return;
       }
 
-      toast.success("Welcome back", {
-        description: "Redirecting to your dashboard…",
+      toast.success("Account created", {
+        description: "Redirecting to onboarding…",
       });
 
+      // Dashboard layout detects no restaurant_id and redirects to /onboarding
       router.push("/dashboard");
       router.refresh();
 
@@ -81,20 +82,37 @@ export function LoginForm() {
       <div className="relative z-10">
         <h1 className="text-3xl font-semibold tracking-tight mb-2 text-zinc-100">
           <TextEffect preset="blur" per="char">
-            Welcome back
+            Create an account
           </TextEffect>
         </h1>
         <p className="text-sm text-zinc-400 mb-8 font-light">
-          Sign in to access the RestaurantOS dashboard.
+          Get started with RestaurantOS today.
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+          {/* Full Name */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-zinc-300">Full Name</label>
+            <Input
+              {...register("fullName")}
+              id="register-name"
+              type="text"
+              autoComplete="name"
+              placeholder="John Doe"
+              className="bg-zinc-900/50 border-white/10 h-12 rounded-xl focus-visible:ring-brand focus-visible:border-brand/50"
+              disabled={isSubmitting}
+            />
+            {errors.fullName && (
+              <p className="text-sm text-destructive mt-1">{errors.fullName.message}</p>
+            )}
+          </div>
+
           {/* Email */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-300">Email Address</label>
             <Input
               {...register("email")}
-              id="login-email"
+              id="register-email"
               type="email"
               autoComplete="email"
               placeholder="manager@restaurant.com"
@@ -108,18 +126,13 @@ export function LoginForm() {
 
           {/* Password */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-zinc-300">Password</label>
-              <Link href="/forgot-password" className="text-xs text-brand hover:text-brand/80 transition-colors">
-                Forgot password?
-              </Link>
-            </div>
+            <label className="text-sm font-medium text-zinc-300">Password</label>
             <div className="relative">
               <Input
                 {...register("password")}
-                id="login-password"
+                id="register-password"
                 type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
+                autoComplete="new-password"
                 placeholder="••••••••"
                 className="bg-zinc-900/50 border-white/10 h-12 rounded-xl pr-12 focus-visible:ring-brand focus-visible:border-brand/50"
                 disabled={isSubmitting}
@@ -140,7 +153,7 @@ export function LoginForm() {
           </div>
 
           <Button
-            id="login-submit"
+            id="register-submit"
             type="submit"
             disabled={isSubmitting}
             className="w-full h-12 rounded-xl bg-brand text-brand-foreground hover:bg-brand/90 transition-all shadow-[0_0_30px_-5px_rgba(234,179,8,0.3)] active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
@@ -148,18 +161,18 @@ export function LoginForm() {
             {isSubmitting ? (
               <span className="flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Signing in…
+                Creating account…
               </span>
             ) : (
-              "Sign In"
+              "Sign Up"
             )}
           </Button>
         </form>
 
         <div className="mt-6 text-center text-sm text-zinc-400">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-brand hover:text-brand/80 transition-colors">
-            Sign Up
+          Already have an account?{" "}
+          <Link href="/login" className="text-brand hover:text-brand/80 transition-colors">
+            Sign In
           </Link>
         </div>
       </div>

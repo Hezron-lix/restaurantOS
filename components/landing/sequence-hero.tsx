@@ -9,7 +9,6 @@ import { Loader2, ArrowRight } from "lucide-react";
 import { TextEffect } from "@/components/ui/text-effect";
 import { ProgressIndicator } from "@/components/landing/progress-indicator";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 
 if (typeof window !== "undefined") {
@@ -265,12 +264,12 @@ export function SequenceHero() {
                     transition={{ delay: 1, duration: 0.8 }}
                     className="mt-24"
                   >
-                    <Link href="/login">
+                    <a href="#features">
                       <Button size="lg" className="glow-brand group text-base h-14 px-10 text-white shadow-[0_0_40px_rgba(234,179,8,0.3)]">
                         See RestaurantOS in Action
                         <ArrowRight className="ml-3 size-5 transition-transform group-hover:translate-x-1" />
                       </Button>
-                    </Link>
+                    </a>
                   </motion.div>
                 )}
               </motion.div>

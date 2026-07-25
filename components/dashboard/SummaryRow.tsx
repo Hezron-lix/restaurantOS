@@ -4,7 +4,13 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { DollarSign, Receipt, Grid2x2, Package } from "lucide-react";
 import { useRestaurant } from "@/components/providers/staff-providers";
 
-export function SummaryRow() {
+interface SummaryRowProps {
+  activeOrdersCount: number;
+  occupiedTablesCount: number;
+  totalTablesCount: number;
+}
+
+export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTablesCount }: SummaryRowProps) {
   const { restaurant } = useRestaurant();
   const currencySymbol = restaurant?.currency === "USD" ? "$" : (restaurant?.currency || "$");
 
@@ -17,15 +23,15 @@ export function SummaryRow() {
     },
     {
       title: "Active Orders",
-      value: "0",
+      value: activeOrdersCount.toString(),
       icon: Receipt,
-      trend: "Start a service to track",
+      trend: activeOrdersCount > 0 ? "Currently processing" : "Start a service to track",
     },
     {
       title: "Occupied Tables",
-      value: "0 / " + (restaurant ? 10 : 0), // Placeholder capacity
+      value: `${occupiedTablesCount} / ${totalTablesCount}`,
       icon: Grid2x2,
-      trend: "All tables available",
+      trend: occupiedTablesCount > 0 ? `${totalTablesCount - occupiedTablesCount} tables available` : "All tables available",
     },
     {
       title: "Inventory Alerts",

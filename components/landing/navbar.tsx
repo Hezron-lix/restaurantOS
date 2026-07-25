@@ -30,7 +30,7 @@ export function Navbar() {
               Sign In
             </Button>
           </Link>
-          <Link href="/login">
+          <Link href="/register">
             <Button size="sm" className="glow-brand">
               Get Started
             </Button>

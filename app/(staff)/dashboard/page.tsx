@@ -7,6 +7,7 @@ import { KitchenStatus } from "@/components/dashboard/KitchenStatus";
 import { RestaurantOverview } from "@/components/dashboard/RestaurantOverview";
 import { StaffOnDuty } from "@/components/dashboard/StaffOnDuty";
 import { ActivityTimeline } from "@/components/dashboard/ActivityTimeline";
+import type { ActivityEntry } from "@/components/dashboard/ActivityTimeline";
 
 export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient();
@@ -33,8 +34,45 @@ export default async function DashboardPage() {
     .select('id, full_name, role')
     .eq('restaurant_id', profile.restaurant_id)
     .limit(5);
-
   const staff = staffData || [];
+
+  // Fetch Table metrics
+  const { data: tablesData } = await supabase
+    .from('tables')
+    .select('id, status')
+    .eq('restaurant_id', profile.restaurant_id);
+    
+  const tables = tablesData || [];
+  const totalTablesCount = tables.length;
+  const occupiedTablesCount = tables.filter(t => t.status !== 'AVAILABLE').length;
+
+  // Fetch Order metrics
+  const { data: recentOrdersData } = await supabase
+    .from('orders')
+    .select('id, table_id, status, total_cents, created_at, tables(table_number)')
+    .eq('restaurant_id', profile.restaurant_id)
+    .order('created_at', { ascending: false })
+    .limit(5);
+    
+  const recentOrders = (recentOrdersData || []).map(o => ({
+    id: o.id,
+    table_number: (o.tables as unknown as { table_number: number } | null)?.table_number,
+    status: o.status,
+    total_cents: o.total_cents,
+    created_at: o.created_at
+  }));
+  
+  const activeOrdersCount = recentOrders.filter(o => ['PLACED', 'PREPARING', 'READY'].includes(o.status)).length;
+
+  // Fetch recent activities
+  const { data: activitiesData } = await supabase
+    .from('restaurant_activities')
+    .select('*')
+    .eq('restaurant_id', profile.restaurant_id)
+    .order('created_at', { ascending: false })
+    .limit(10);
+    
+  const activities = activitiesData || [];
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6">
@@ -44,7 +82,11 @@ export default async function DashboardPage() {
       </div>
 
       {/* Top Summary Row */}
-      <SummaryRow />
+      <SummaryRow 
+        activeOrdersCount={activeOrdersCount}
+        occupiedTablesCount={occupiedTablesCount}
+        totalTablesCount={totalTablesCount}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Operational (Takes up 2/3 on large screens) */}
@@ -54,7 +96,7 @@ export default async function DashboardPage() {
               <QuickActions />
             </div>
             <div className="h-64">
-              <RecentOrders />
+              <RecentOrders orders={recentOrders} />
             </div>
             <div className="h-64">
               <KitchenStatus />
@@ -66,7 +108,7 @@ export default async function DashboardPage() {
         <div className="space-y-6">
           <RestaurantOverview />
           <StaffOnDuty staff={staff} />
-          <ActivityTimeline />
+          <ActivityTimeline activities={activities as ActivityEntry[]} />
         </div>
       </div>
     </div>

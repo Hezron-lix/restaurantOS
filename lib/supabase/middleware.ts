@@ -36,7 +36,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // We'll protect any route that's not explicitly public.
-  const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password', '/showcase'];
+  const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/showcase'];
   
   // Also protect the onboarding route
   const isPublicRoute = publicRoutes.includes(request.nextUrl.pathname);

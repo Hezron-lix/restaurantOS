@@ -13,6 +13,7 @@ import { StaffSidebar } from '@/components/layout/StaffSidebar';
 import { Workspace } from '@/components/layout/Workspace';
 import { StaffProviders } from '@/components/providers/staff-providers';
 import { CommandPalette } from '@/components/shell/CommandPalette';
+import { RealtimeRefresher } from '@/components/providers/RealtimeRefresher';
 import type { UserRole, RestaurantRecord } from '@/types/database';
 
 export default async function StaffLayout({
@@ -57,6 +58,7 @@ export default async function StaffLayout({
 
   return (
     <StaffProviders initialSession={{ user, profile }} initialRestaurant={restaurant as RestaurantRecord}>
+      <RealtimeRefresher />
       <div className="min-h-screen flex bg-background text-foreground">
         {/* Sidebar is persistent on the left */}
         <StaffSidebar />
