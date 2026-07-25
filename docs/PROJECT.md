@@ -28,8 +28,8 @@ This implementation targets **ONE individual restaurant operational workspace**.
 
 ### Project KPI Objectives
 - **Sub-100ms Event Synchronization**: Eliminate page refreshing entirely by routing order placements, kitchen updates, and waiter assistance calls across persistent WebSocket channels.
-- **Zero Hallucination Operational AI**: Deploy structured diagnostic intelligence focused solely on ingredient consumption rate predictions and operational trend anomalies.
-- **Frictionless Demo Journey**: Deliver a flawless, deterministic 10-step hackathon walkthrough demonstrating immediate cross-device operational synergy.
+- **Zero Hallucination Operational AI**: Deploy structured diagnostic intelligence focused solely on ingredient consumption rate predictions and operational trend anomalies, guaranteed by deterministic local fallbacks.
+- **Frictionless Demo & Reset Execution**: Deliver a flawless, deterministic 10-step hackathon walkthrough supported by realistic demo seed data and a one-command reset environment (`npm run demo:reset`).
 
 ---
 
@@ -45,26 +45,42 @@ graph LR
     AI[AI Insights Engine] -->|Predictive Stock & Velocity Alerts| M
 ```
 
-1. **Customer / Guest**:
-   - Accesses the digital restaurant environment instantly via dining table QR scans.
-   - Browses live menus synchronized directly with kitchen stock availability.
-   - Books table queues or initiates interactive order placement without installing secondary mobile software.
-2. **Kitchen Staff / Chef**:
-   - Interacts with a high-visibility Kitchen Display System (KDS).
-   - Receives instant ticket routing, monitors preparation cooking timers, and toggles items "Out of Stock" to immediately block menu ordering.
-3. **Waiter / Server**:
-   - Manages floor coordination via an agile waiter terminal.
-   - Receives instant, targeted notifications when kitchen dishes reach "Ready to Serve" status or when seated guests request table assistance.
-4. **Cashier**:
-   - Operates a streamlined billing checkout interface.
-   - Retrieves active table order sessions, compiles billing totals, processes payment settlements, and transitions table cleaning statuses.
-5. **General Manager / Executive**:
-   - Monitors live restaurant analytics: daily revenue accumulation, average preparation duration, table occupancy turnover rates, and item sales distribution.
-   - Receives actionable, real-time AI predictive intelligence warnings to adjust staffing or inventory sourcing.
+1. **Customer / Guest**: Accesses the digital restaurant environment via dining table QR scans, browses live menus synchronized directly with kitchen stock availability, books table queues, or initiates interactive order placement without installing secondary software.
+2. **Kitchen Staff / Chef**: Interacts with a high-visibility Kitchen Display System (KDS). Receives instant ticket routing, monitors preparation cooking timers, and toggles items "Out of Stock" to immediately block menu ordering.
+3. **Waiter / Server**: Manages floor coordination via an agile waiter terminal. Receives instant, targeted notifications when kitchen dishes reach "Ready to Serve" status or when seated guests request table assistance.
+4. **Cashier**: Operates a streamlined billing checkout interface. Retrieves active table order sessions, compiles billing totals in integer cents, processes payment settlements, and transitions table cleaning statuses.
+5. **General Manager / Executive**: Monitors live restaurant analytics: daily revenue accumulation, average preparation duration, table occupancy turnover rates, and item sales distribution. Receives actionable AI predictive operational warnings.
 
 ---
 
-## 5. Architectural Mandates
-- **No Fake APIs**: Every feature must execute against live relational database schemas and reactive webhooks.
-- **UI Design Authority**: All visual frontend identities, layout structures, spacing tokens, and color branding remain under exclusive user control per the project UI Rule.
-- **Code Quality Immutable Contract**: Codebase strictly complies with SOLID principles, DRY methodologies, explicit TypeScript types, and Zod input boundaries.
+## 5. Sprint-Based Delivery Roadmap
+
+To guarantee project stability during hackathon development, implementation is strictly broken down into **8 modular Sprints**. **Crucial Mandate**: Each individual sprint must leave the application in a fully compilable, functional, and working state before advancing to the next milestone.
+
+```mermaid
+gantt
+    title RestaurantOS Sprint-Based Milestone Roadmap
+    dateFormat  X
+    axisFormat  Sprint %s
+    section Core Infrastructure
+    Sprint 1: Setup, Database, Auth & Roles      :0, 1
+    section Front-of-House
+    Sprint 2: Menu, Tables & Reservations          :1, 2
+    Sprint 3: Realtime Ordering Engine            :2, 3
+    section Back-of-House
+    Sprint 4: Kitchen Display System (KDS)        :3, 4
+    Sprint 5: Waiter Coordination Console         :4, 5
+    section Checkout & Intelligence
+    Sprint 6: Cashier POS & Billing Settlement   :5, 6
+    Sprint 7: Manager Executive Analytics         :6, 7
+    Sprint 8: Operational AI Insights & Fallbacks :7, 8
+```
+
+- **Sprint 1 — Project Setup, Database, Authentication, Roles**: Configure relational Supabase schema, establish Role-Based Access Control (RBAC) linking to user profiles, set up `seed.ts`, and test `npm run demo:reset`.
+- **Sprint 2 — Menu, Tables, Reservations**: Implement live menu database queries, floor table layout modeling, ephemeral session generation, and guest booking queues.
+- **Sprint 3 — Ordering**: Build interactive customer ordering server actions with Zod boundary validation and collaborative table cart sync.
+- **Sprint 4 — Kitchen**: Create the Kitchen Display System (KDS) engine with real-time ticket arrival (<100ms), active cooking preparation timers, and item out-of-stock toggles.
+- **Sprint 5 — Waiter**: Deploy the Waiter Coordination Console featuring instantaneous WebSocket alert feeds and table assistance management.
+- **Sprint 6 — Billing**: Construct the Cashier checkout terminal with cent-based financial calculations, tax aggregation, and table settlement clearing.
+- **Sprint 7 — Analytics**: Engine executive managerial dashboard views displaying live table turnover rates, revenue accumulation velocity, and prep latency KPIs.
+- **Sprint 8 — AI**: Integrate operational AI predictive inventory forecasts and demand anomaly detection, fortified by zero-downtime deterministic local fallback algorithms.

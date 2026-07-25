@@ -71,18 +71,18 @@ All Server Actions are encapsulated inside the top-level `actions/` domain direc
 
 ---
 
-## 4. Supplementary REST Endpoints (`/api/v1/...`)
+## 4. Supplementary REST Endpoints & One-Command Demo Restoration
 
 While UI interactions utilize Server Actions, dedicated REST HTTP routes are maintained exclusively for asynchronous system jobs and hackathon evaluation resets:
 
 | HTTP Method | Route Endpoint | Description & Authorization |
 | :--- | :--- | :--- |
-| `POST` | `/api/v1/ai/generate-insights` | Triggered periodically or on order threshold milestones to execute operational predictive models. Protected by `SUPABASE_SERVICE_ROLE_KEY`. |
-| `POST` | `/api/v1/demo/reset` | Cleans up transient testing orders/alerts and repopulates clean seed tables (`menu_items`, `tables`, `inventory`) for consecutive demo runs. Protected by Admin Token. |
+| `POST` | `/api/v1/ai/generate-insights` | Triggered periodically or on order threshold milestones to execute operational predictive models with deterministic local fallback guarantees. Protected by `SUPABASE_SERVICE_ROLE_KEY`. |
+| `POST` | `/api/v1/demo/reset` | Programmatic HTTP hook that executes the exact same logic as `npm run demo:reset` (`seed.ts`). Cleans up transient test transactions and repopulates realistic demo tables for consecutive judging rounds in under 2 seconds. |
 | `GET` | `/api/v1/health` | Diagnostic status check reporting real-time Supabase PostgreSQL connection viability and system uptime. Publicly accessible. |
 
 ---
 
 ## 5. Security & Validation Rules
 - **No Direct SQL Queries in Actions**: Server Actions must invoke encapsulated database helpers inside `services/`.
-- **Strict Zod Boundary Enforcement**: Every action parameter must be verified by calling `Schema.safeParse(input)`. If parsing fails, the action immediately aborts and returns an `'VALIDATION_ERROR'` envelope detailing field-specific discrepancies.
+- **Strict Zod Boundary Enforcement**: Every action parameter must be verified by calling `Schema.safeParse(input)`. If parsing fails, the action immediately aborts and returns a `'VALIDATION_ERROR'` envelope detailing field-specific discrepancies.

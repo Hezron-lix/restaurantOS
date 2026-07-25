@@ -14,69 +14,67 @@ Unlike consumer food delivery apps or monolithic enterprise ERPs, **RestaurantOS
 
 This project strictly binds feature implementation to our authoritative set of immutable architectural engineering contracts documented inside the [`docs/`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs) directory:
 
-- [`PROJECT.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/PROJECT.md) — Product vision, problem statement, single-restaurant scope, goals, and user roles.
+- [`PROJECT.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/PROJECT.md) — Product vision, problem statement, single-restaurant scope, goals, role personas, and Sprint 1-8 roadmap.
 - [`ARCHITECTURE.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/ARCHITECTURE.md) — Next.js 15 App Router hybrid rendering, React Server Actions, and Supabase Realtime WebSocket topology.
-- [`DATABASE.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DATABASE.md) — Strict 3NF relational schema covering the 12 essential operational tables, cent-based integer currency pricing, and Row-Level Security (RLS) enforcement.
-- [`API.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/API.md) — RPC over REST architecture, Server Action domain boundaries, and unified Zod runtime error validation envelopes.
+- [`DATABASE.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DATABASE.md) — Strict 3NF relational schema covering the 12 essential operational tables, realistic `seed.ts` demo strategy, integer cent monetary representation, and RLS policies.
+- [`API.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/API.md) — RPC over REST architecture, Server Action domain boundaries, programmatic demo reset hooks, and Zod error envelopes.
 - [`WORKFLOWS.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/WORKFLOWS.md) — Complete 10-step demo journey and deterministic Finite State Machines (FSMs) for tables and order tickets.
 - [`UI_GUIDELINES.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/UI_GUIDELINES.md) — Codified inviolable **UI Rule** reserving visual identity to user direction, target hardware viewports, and Framer Motion interaction standards.
-- [`DEVELOPMENT.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DEVELOPMENT.md) — SOLID & DRY engineering governance, strict TypeScript rules, TanStack Query optimistic updates, and Git conventional commit rules.
-- [`AI.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/AI.md) — High-impact operational AI focused exclusively on predictive inventory depletion and manager demand analytics (no generic conversational chatbots).
-- [`DEMO.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DEMO.md) — Deterministic 5-minute live hackathon presentation script evaluating all five dining roles without fake delays or mocked data.
-- [`PRODUCT_DECISIONS.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/PRODUCT_DECISIONS.md) — Comprehensive Architectural Decision Records (ADRs), lean tradeoff justifications, and future multi-tenant escalation strategies.
+- [`DEVELOPMENT.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DEVELOPMENT.md) — Mandatory skeleton loading/empty/error states, SOLID & DRY engineering governance, strict TypeScript rules, and sprint delivery protocols.
+- [`AI.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/AI.md) — High-impact operational AI focused exclusively on predictive inventory depletion and manager demand analytics, fortified by deterministic local statistical fallbacks.
+- [`DEMO.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DEMO.md) — Deterministic 5-minute live hackathon presentation timeline and `npm run demo:reset` restoration mechanics.
+- [`PRESENTATION.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/PRESENTATION.md) — Concise, professional 5-minute spoken presenter script, stage choreography, and judging defense cheat sheet.
+- [`PRODUCT_DECISIONS.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/PRODUCT_DECISIONS.md) — Comprehensive Architectural Decision Records (ADRs 001–008), lean tradeoff justifications, and future escalation strategies.
 
 ---
 
-## 🏗️ Modern SaaS Directory Architecture
+## 🏗️ Sprint-Based Milestone Roadmap
 
-The repository enforces clean domain decoupling across production standard directories:
+To ensure peak stability, development proceeds systematically across 8 self-contained Sprints. Each sprint guarantees a clean, compilable, and demonstrable application checkpoint:
 
 ```text
-├── .github/          # CI/CD workflows, automation scripts, and issue templates
-├── actions/          # Domain-isolated Next.js 15 React Server Actions (Orders, KDS, Billing)
-├── app/              # Next.js App Router layout layouts, root viewports, and API webhooks
-├── components/       # Domain interface component assemblies and atomic shadcn/ui elements
-│   └── ui/           # Generic baseline shadcn/ui design primitives
-├── config/           # Centralized system configurations, FSM enums, and operational constants
-├── docs/             # Immutable engineering contracts and system specification blueprints
-├── hooks/            # Reusable declarative client hooks for TanStack Query & real-time sockets
-├── lib/              # Client utilities, class merging (`cn`), and stateless calculation helpers
-├── public/           # Static media assets, branding icons, and web app manifest files
-├── services/         # Encapsulated Supabase PostgreSQL query builders and AI wrappers
-├── supabase/         # Database migrations, seed scripts, edge helpers, and auth policies
-├── types/            # Strict TypeScript interfaces reflecting relational database entities
-├── validations/      # Runtime Zod validation boundaries shared across forms and server actions
-├── .env.example      # Sample production credentials and AI key configuration template
-└── README.md         # Primary engineering overview reference (this document)
+Sprint 1: Project setup, Database, Authentication, and Role permissions (Current Next Step)
+Sprint 2: Live Menu queries, Table occupancy modeling, and Reservation queues
+Sprint 3: Realtime Customer Ordering and collaborative table session tokens
+Sprint 4: Kitchen Display System (KDS), preparation cooking timers, and stock toggles
+Sprint 5: Waiter Coordination Console and automated sub-100ms alert feeds
+Sprint 6: Cashier POS Checkout, cent-based taxation, and settlement clearing
+Sprint 7: Executive Manager Analytics, revenue velocity charts, and turnover KPIs
+Sprint 8: Operational AI Insights Engine with deterministic fallback algorithms
 ```
 
 ---
 
-## 🚀 Quickstart & Development Workflow
+## 🚀 Quickstart & One-Command Demo Reset
 
 ### Prerequisites
 - Node.js v20+ and npm / pnpm / bun.
 - Supabase account with configured PostgreSQL project credentials.
 
-### Installation
+### Initial Configuration & Installation
 1. **Clone & Install Dependencies:**
    ```bash
    git clone <repository-url>
    cd restaurant-os
    npm install
    ```
-2. **Configure Environment Secrets:**
+2. **Configure Environment Credentials:**
    ```bash
    cp .env.example .env.local
    ```
    *Populate `.env.local` with corresponding Supabase database URLs and AI keys.*
 
-3. **Verify Linter & Start Development Server:**
-   ```bash
-   npm run lint
-   npm run dev
-   ```
-   Open `http://localhost:3000` to inspect application status. Note: Feature page layouts remain unconstructed pending authoritative visual design instructions.
+### One-Command Demo Environment Recovery
+To immediately re-initialize all 12 database tables with realistic, high-fidelity dine-in demo accounts, active menu catalogs, and inventory warning triggers in under 2 seconds, run:
+```bash
+npm run demo:reset
+```
+
+### Launch Development Server
+```bash
+npm run dev
+```
+Open `http://localhost:3000` to inspect application status. Note: Per our strict UI Rule, feature page layouts remain unconstructed pending explicit visual design guidance.
 
 ---
 
