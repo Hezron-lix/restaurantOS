@@ -1,0 +1,1 @@
+# This file ensures Git tracks the types directory for reusable TypeScript interfaces, database type definitions, and Zod schemas.
