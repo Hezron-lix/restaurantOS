@@ -12,11 +12,12 @@ type Notification = {
   type: "info" | "success" | "warning";
   time: string;
   read: boolean;
+  badge?: string;
 };
 
 const MOCK_NOTIFICATIONS: Notification[] = [
   { id: "1", title: "New Order", message: "Table 4 placed an order.", type: "info", time: "2 min ago", read: false },
-  { id: "2", title: "Inventory Low", message: "Tomatoes are running low.", type: "warning", time: "1 hr ago", read: false },
+  { id: "2", title: "Inventory Low", message: "Tomatoes are running low.", type: "warning", time: "1 hr ago", read: false, badge: "Demo Alert" },
   { id: "3", title: "Shift Complete", message: "Closing checklist done.", type: "success", time: "Yesterday", read: true },
 ];
 
@@ -92,10 +93,17 @@ export function NotificationCenter() {
                     </div>
                     <div className="flex-1 flex flex-col min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <span className={cn("text-sm font-medium truncate", notif.read ? "text-text-secondary" : "text-text-primary")}>
-                          {notif.title}
-                        </span>
-                        <span className="text-[10px] text-text-muted whitespace-nowrap">{notif.time}</span>
+                        <div className="flex items-center gap-2 truncate">
+                          <span className={cn("text-sm font-medium truncate", notif.read ? "text-text-secondary" : "text-text-primary")}>
+                            {notif.title}
+                          </span>
+                          {notif.badge && (
+                            <span className="px-1.5 py-0.5 rounded-md bg-brand/10 text-brand text-[10px] font-bold uppercase tracking-wider shrink-0">
+                              {notif.badge}
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-text-muted whitespace-nowrap shrink-0">{notif.time}</span>
                       </div>
                       <span className="text-xs text-text-muted line-clamp-2 mt-0.5">{notif.message}</span>
                     </div>

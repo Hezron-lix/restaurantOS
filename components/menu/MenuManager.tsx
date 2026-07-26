@@ -4,9 +4,9 @@ import { useState, useTransition } from "react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Check, Loader2, UtensilsCrossed } from "lucide-react";
+import { Plus, Check, Loader2, UtensilsCrossed, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import { createMenuCategoryAction, createMenuItemAction, toggleMenuItemAvailabilityAction } from "@/app/actions/menu";
+import { createMenuCategoryAction, createMenuItemAction, toggleMenuItemAvailabilityAction, updateMenuItemAction } from "@/app/actions/menu";
 import { cn } from "@/lib/utils";
 
 import { CurrencyDisplay } from "@/components/shared/CurrencyDisplay";
@@ -45,6 +45,12 @@ export function MenuManager({ restaurantId, categories }: MenuManagerProps) {
   // New Item State
   const [newItemName, setNewItemName] = useState("");
   const [newItemPrice, setNewItemPrice] = useState("");
+
+  // Edit Item State
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editItemName, setEditItemName] = useState("");
+  const [editItemDesc, setEditItemDesc] = useState("");
+  const [editItemPrice, setEditItemPrice] = useState("");
 
   const handleAddCategory = () => {
     if (!newCatName) return;
@@ -88,6 +94,33 @@ export function MenuManager({ restaurantId, categories }: MenuManagerProps) {
       try {
         await toggleMenuItemAvailabilityAction(itemId, !current);
         toast.success(current ? "Item marked out of stock" : "Item marked available");
+      } catch {
+        toast.error("Failed to update item");
+      }
+    });
+  };
+
+  const startEditing = (item: MenuItem) => {
+    setEditingItemId(item.id);
+    setEditItemName(item.name);
+    setEditItemDesc(item.description || "");
+    setEditItemPrice((item.price_cents / 100).toFixed(2));
+  };
+
+  const handleUpdateItem = (itemId: string) => {
+    if (!editItemName || !editItemPrice) return;
+    
+    const priceCents = Math.round(parseFloat(editItemPrice) * 100);
+    if (isNaN(priceCents)) {
+      toast.error("Invalid price");
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        await updateMenuItemAction(itemId, editItemName, editItemDesc, priceCents);
+        toast.success("Menu item updated");
+        setEditingItemId(null);
       } catch {
         toast.error("Failed to update item");
       }
@@ -216,31 +249,93 @@ export function MenuManager({ restaurantId, categories }: MenuManagerProps) {
             )}
 
             {items.map(item => (
-              <GlassCard key={item.id} className={cn("p-4 flex flex-col justify-between transition-all", !item.is_available && "opacity-50")}>
-                <div>
-                  <div className="flex justify-between items-start">
-                    <h3 className="font-semibold text-zinc-200">{item.name}</h3>
-                    <span className="font-medium text-brand bg-brand/10 px-2 py-0.5 rounded text-sm">
-                      <CurrencyDisplay cents={item.price_cents} />
-                    </span>
+              <GlassCard key={item.id} className={cn("p-4 flex flex-col justify-between transition-all", !item.is_available && editingItemId !== item.id && "opacity-50")}>
+                {editingItemId === item.id ? (
+                  <div className="space-y-4 animate-in fade-in">
+                    <div>
+                      <label className="text-xs text-zinc-400">Item Name</label>
+                      <Input 
+                        value={editItemName}
+                        onChange={e => setEditItemName(e.target.value)}
+                        className="h-8 mt-1 bg-zinc-900/50"
+                        autoFocus
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-zinc-400">Description</label>
+                      <Input 
+                        value={editItemDesc}
+                        onChange={e => setEditItemDesc(e.target.value)}
+                        placeholder="Optional description"
+                        className="h-8 mt-1 bg-zinc-900/50"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-zinc-400">Price</label>
+                      <Input 
+                        value={editItemPrice}
+                        onChange={e => setEditItemPrice(e.target.value)}
+                        type="number"
+                        step="0.01"
+                        className="h-8 mt-1 bg-zinc-900/50"
+                      />
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <Button 
+                        className="flex-1 bg-brand text-zinc-950 hover:bg-brand/90 h-8 text-sm"
+                        onClick={() => handleUpdateItem(item.id)}
+                        disabled={isPending || !editItemName || !editItemPrice}
+                      >
+                        {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="flex-1 h-8 text-sm text-zinc-400 hover:text-white"
+                        onClick={() => setEditingItemId(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
                   </div>
-                  {item.description && <p className="text-sm text-zinc-500 mt-2 line-clamp-2">{item.description}</p>}
-                </div>
-                
-                <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
-                  <span className={cn("text-xs font-medium px-2 py-1 rounded-full", item.is_available ? "bg-emerald-500/10 text-emerald-400" : "bg-zinc-800 text-zinc-400")}>
-                    {item.is_available ? "In Stock" : "Sold Out"}
-                  </span>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-7 text-xs text-zinc-400 hover:text-white"
-                    onClick={() => handleToggleItem(item.id, item.is_available)}
-                    disabled={isPending}
-                  >
-                    {item.is_available ? "Mark Out of Stock" : "Mark In Stock"}
-                  </Button>
-                </div>
+                ) : (
+                  <>
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <h3 className="font-semibold text-zinc-200">{item.name}</h3>
+                        <span className="font-medium text-brand bg-brand/10 px-2 py-0.5 rounded text-sm shrink-0 ml-2">
+                          <CurrencyDisplay cents={item.price_cents} />
+                        </span>
+                      </div>
+                      {item.description && <p className="text-sm text-zinc-500 mt-2 line-clamp-2">{item.description}</p>}
+                    </div>
+                    
+                    <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
+                      <span className={cn("text-xs font-medium px-2 py-1 rounded-full", item.is_available ? "bg-emerald-500/10 text-emerald-400" : "bg-zinc-800 text-zinc-400")}>
+                        {item.is_available ? "In Stock" : "Sold Out"}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-7 w-7 text-zinc-400 hover:text-white"
+                          onClick={() => startEditing(item)}
+                          disabled={isPending}
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 text-xs text-zinc-400 hover:text-white"
+                          onClick={() => handleToggleItem(item.id, item.is_available)}
+                          disabled={isPending}
+                        >
+                          {item.is_available ? "Mark Out of Stock" : "Mark In Stock"}
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                )}
               </GlassCard>
             ))}
 

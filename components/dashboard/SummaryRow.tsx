@@ -41,7 +41,8 @@ export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTables
       title: "Inventory Alerts",
       value: 0,
       icon: Package,
-      trend: "Stock looks good",
+      trend: "Inventory healthy",
+      badge: "Demo",
     },
   ];
 
@@ -52,8 +53,15 @@ export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTables
         return (
           <GlassCard key={i} className="p-5 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-zinc-400">{stat.title}</span>
-              <div className="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-zinc-400">{stat.title}</span>
+                {stat.badge && (
+                  <span className="px-1.5 py-0.5 rounded-md bg-brand/10 text-brand text-[10px] font-bold uppercase tracking-wider">
+                    {stat.badge}
+                  </span>
+                )}
+              </div>
+              <div className="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center shrink-0">
                 <Icon className="w-4 h-4" />
               </div>
             </div>

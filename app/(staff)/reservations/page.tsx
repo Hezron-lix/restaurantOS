@@ -7,9 +7,17 @@ export default function ReservationsPage() {
       <h1 className="text-2xl font-bold tracking-tight text-zinc-100 mb-6">Reservations</h1>
       <div className="flex-1">
         <PlaceholderState 
+          badge="Roadmap"
           title="Reservations" 
-          description="Bookings, waitlist, and table assignment will be available here." 
+          description="Future customer reservation and waitlist management." 
           icon={Calendar} 
+          plannedCapabilities={[
+            "Online reservations",
+            "Waitlist",
+            "Table assignment",
+            "Arrival notifications",
+            "Reservation calendar"
+          ]}
           actionLabel="Return to Dashboard"
           actionHref="/dashboard"
         />

@@ -83,3 +83,30 @@ export async function toggleMenuItemAvailabilityAction(itemId: string, isAvailab
 
   revalidatePath("/menu");
 }
+
+export async function updateMenuItemAction(
+  itemId: string,
+  name: string,
+  description: string = "",
+  priceCents: number
+) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const { error } = await supabase
+    .from("menu_items")
+    .update({
+      name,
+      description,
+      price_cents: priceCents,
+    })
+    .eq("id", itemId);
+
+  if (error) {
+    console.error("Update Menu Item Error:", error);
+    throw new Error(error.message);
+  }
+
+  revalidatePath("/menu");
+}

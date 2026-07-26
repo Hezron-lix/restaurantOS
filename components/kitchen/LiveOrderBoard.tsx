@@ -102,12 +102,19 @@ export function LiveOrderBoard({ initialOrders }: { initialOrders: Order[] }) {
         <div className="flex-1 p-4 overflow-y-auto space-y-3">
           {order.items.map((item, idx) => (
             <div key={idx} className="flex justify-between items-start border-b border-white/5 pb-2 last:border-0">
-              <div className="flex gap-2">
-                <span className="font-bold text-brand">{item.quantity}x</span>
-                <div>
-                  <p className="font-medium text-zinc-200">{item.name}</p>
-                  {item.notes && <p className="text-xs text-orange-300 mt-1 italic">&quot;{item.notes}&quot;</p>}
+              <div className="flex justify-between items-start w-full">
+                <div className="flex-1">
+                  <span className="font-medium text-zinc-100">{item.name}</span>
+                  {item.notes && (
+                    <div className="mt-1.5 p-2 bg-red-500/10 border border-red-500/20 rounded-md">
+                      <p className="text-sm font-semibold text-red-400 flex items-start gap-1.5">
+                        <span className="text-red-500 mt-0.5 uppercase text-[10px] tracking-wider font-bold shrink-0">Note:</span>
+                        {item.notes}
+                      </p>
+                    </div>
+                  )}
                 </div>
+                <span className="text-sm font-medium text-zinc-400 w-8 text-right shrink-0">x{item.quantity}</span>
               </div>
             </div>
           ))}

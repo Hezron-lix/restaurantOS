@@ -7,9 +7,17 @@ export default function AiAgentPage() {
       <h1 className="text-2xl font-bold tracking-tight text-zinc-100 mb-6">AI Agent</h1>
       <div className="flex-1">
         <PlaceholderState 
+          badge="Roadmap"
           title="Restaurant AI" 
-          description="Your intelligent assistant for inventory forecasting, dynamic pricing, and staff scheduling." 
+          description="Planned AI workspace for operational assistance and business insights." 
           icon={Bot} 
+          plannedCapabilities={[
+            "Restaurant assistant",
+            "Operational recommendations",
+            "Business insights",
+            "Forecasting",
+            "Intelligent reporting"
+          ]}
           actionLabel="Return to Dashboard"
           actionHref="/dashboard"
         />

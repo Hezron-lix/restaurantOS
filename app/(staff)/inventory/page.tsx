@@ -7,9 +7,17 @@ export default function InventoryPage() {
       <h1 className="text-2xl font-bold tracking-tight text-zinc-100 mb-6">Inventory</h1>
       <div className="flex-1">
         <PlaceholderState 
-          title="Inventory Tracking" 
-          description="Stock levels, alerts, and supplier management will be available here." 
+          badge="Roadmap"
+          title="Inventory Management" 
+          description="Stock monitoring and supply management." 
           icon={Package} 
+          plannedCapabilities={[
+            "Stock levels",
+            "Low-stock alerts",
+            "Supplier management",
+            "Purchase orders",
+            "Ingredient tracking"
+          ]}
           actionLabel="Return to Dashboard"
           actionHref="/dashboard"
         />

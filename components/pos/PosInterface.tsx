@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, ArrowLeft, Send, Loader2, CheckCircle2 } from "lucide-react";
+import { Plus, Minus, ArrowLeft, Send, Loader2, CheckCircle2, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { submitOrderAction } from "@/app/actions/orders";
 import { toast } from "sonner";
@@ -30,6 +30,7 @@ interface OrderItem {
   name: string;
   price_cents: number;
   quantity: number;
+  notes?: string;
 }
 
 interface PosInterfaceProps {
@@ -43,6 +44,7 @@ interface PosInterfaceProps {
 export function PosInterface({ tableId, tableNumber, orderId, categories, menuItems }: PosInterfaceProps) {
   const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id || "");
   const [cart, setCart] = useState<OrderItem[]>([]);
+  const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
@@ -67,6 +69,15 @@ export function PosInterface({ tableId, tableNumber, orderId, categories, menuIt
       }
       return i;
     }).filter(i => i.quantity > 0));
+  };
+
+  const updateNote = (itemId: string, note: string) => {
+    setCart(prev => prev.map(i => {
+      if (i.menu_item_id === itemId) {
+        return { ...i, notes: note };
+      }
+      return i;
+    }));
   };
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price_cents * item.quantity), 0);
@@ -184,7 +195,32 @@ export function PosInterface({ tableId, tableNumber, orderId, categories, menuIt
                           <Plus className="w-3 h-3" />
                         </button>
                       </div>
+                      
+                      {!item.notes && expandedNoteId !== item.menu_item_id && (
+                        <button 
+                          onClick={() => setExpandedNoteId(item.menu_item_id)}
+                          className="text-xs text-zinc-400 hover:text-brand flex items-center gap-1 transition-colors"
+                        >
+                          <MessageSquare className="w-3 h-3" /> Add Note
+                        </button>
+                      )}
                     </div>
+                    
+                    {(item.notes !== undefined || expandedNoteId === item.menu_item_id) && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        className="mt-2"
+                      >
+                        <textarea
+                          placeholder="e.g. Less oil, extra crispy..."
+                          value={item.notes || ""}
+                          onChange={(e) => updateNote(item.menu_item_id, e.target.value)}
+                          maxLength={150}
+                          className="w-full bg-zinc-950 border border-white/10 rounded-md text-xs text-zinc-200 p-2 focus:outline-none focus:border-brand/50 resize-none h-16"
+                        />
+                      </motion.div>
+                    )}
                   </motion.div>
                 ))}
               </AnimatePresence>

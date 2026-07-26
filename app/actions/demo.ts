@@ -142,7 +142,7 @@ export async function enableDemoModeAction(restaurantId: string) {
   // 8. Seed Activities
   const activities = [
     { restaurant_id: restaurantId, type: "shift_start", title: "Shift Started", description: "Evening service has begun.", icon_name: "Sun", color_class: "text-amber-400", bg_class: "bg-amber-400/10" },
-    { restaurant_id: restaurantId, type: "inventory_alert", title: "Low Stock", description: "Truffle oil is running low.", icon_name: "AlertTriangle", color_class: "text-red-400", bg_class: "bg-red-400/10" },
+    { restaurant_id: restaurantId, type: "inventory_alert", title: "Demo Alert • Low Stock", description: "Truffle oil is running low.", icon_name: "AlertTriangle", color_class: "text-red-400", bg_class: "bg-red-400/10" },
   ];
   await admin.from("restaurant_activities").insert(activities);
 
