@@ -1,26 +1,18 @@
-import { PlaceholderState } from "@/components/ui/placeholder-state";
-import { Bot } from "lucide-react";
+import { ChatBox } from '@/components/ai/ChatBox';
 
-export default function AiAgentPage() {
+export const metadata = {
+  title: 'Operations AI - RestaurantOS',
+};
+
+export default function AIPage() {
   return (
-    <div className="p-6 h-full flex flex-col">
-      <h1 className="text-2xl font-bold tracking-tight text-zinc-100 mb-6">AI Agent</h1>
-      <div className="flex-1">
-        <PlaceholderState 
-          badge="Roadmap"
-          title="Restaurant AI" 
-          description="Planned AI workspace for operational assistance and business insights." 
-          icon={Bot} 
-          plannedCapabilities={[
-            "Restaurant assistant",
-            "Operational recommendations",
-            "Business insights",
-            "Forecasting",
-            "Intelligent reporting"
-          ]}
-          actionLabel="Return to Dashboard"
-          actionHref="/dashboard"
-        />
+    <div className="h-[calc(100vh-8rem)] w-full max-w-4xl mx-auto flex flex-col pt-4">
+      <div className="mb-4">
+        <h1 className="text-3xl font-bold tracking-tight">Restaurant Copilot</h1>
+        <p className="text-muted-foreground mt-1">Your AI assistant for real-time restaurant operations.</p>
+      </div>
+      <div className="flex-1 min-h-0">
+        <ChatBox />
       </div>
     </div>
   );

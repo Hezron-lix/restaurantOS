@@ -12,9 +12,10 @@ import {
   MenuSquare, 
   Box, 
   Users, 
+  Contact, 
   UserCircle, 
   BarChart4, 
-  Bot, 
+  Sparkles, 
   Settings,
   ChevronLeft,
   ChevronRight
@@ -32,10 +33,10 @@ const NAV_MODULES = [
   { name: "Reservations", href: "/reservations", icon: Calendar, permission: "manage:reservations" },
   { name: "Menu", href: "/menu", icon: MenuSquare, permission: "manage:menu" },
   { name: "Inventory", href: "/inventory", icon: Box, permission: "manage:inventory" },
-  { name: "Customers", href: "/customers", icon: Users, permission: "manage:customers" },
-  { name: "Staff", href: "/staff", icon: UserCircle, permission: "manage:staff" },
+  { name: "Customers", href: "/customers", icon: Contact, permission: "manage:customers" },
+  { name: "Staff", href: "/staff", icon: Users, permission: "manage:staff" },
   { name: "Analytics", href: "/analytics", icon: BarChart4, permission: "view:analytics" },
-  { name: "AI Agent", href: "/ai", icon: Bot, permission: "manage:ai" },
+  { name: "Restaurant Copilot", href: "/ai", icon: Sparkles, permission: "manage:ai" },
 ] as const;
 
 export function StaffSidebar({ className }: { className?: string }) {

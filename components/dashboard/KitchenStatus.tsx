@@ -5,7 +5,7 @@ import { ChefHat } from "lucide-react";
 
 export function KitchenStatus({ activeTicketsCount = 0 }: { activeTicketsCount?: number }) {
   return (
-    <GlassCard className="p-6 flex items-center justify-between bg-gradient-to-br from-orange-950/20 to-zinc-950 border-orange-900/20">
+    <GlassCard className="h-full p-6 flex items-center justify-between bg-gradient-to-br from-orange-950/20 to-zinc-950 border-orange-900/20">
       <div>
         <h3 className="text-lg font-semibold text-zinc-100 mb-1">Kitchen Status</h3>
         <p className="text-zinc-400 text-sm">

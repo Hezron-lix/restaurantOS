@@ -1,5 +1,5 @@
 import { PlaceholderState } from "@/components/ui/placeholder-state";
-import { Users } from "lucide-react";
+import { Contact } from "lucide-react";
 
 export default function CustomersPage() {
   return (
@@ -10,7 +10,7 @@ export default function CustomersPage() {
           badge="Roadmap"
           title="Customer CRM" 
           description="Guest profiles and relationship management." 
-          icon={Users} 
+          icon={Contact} 
           plannedCapabilities={[
             "Customer history",
             "Preferences",

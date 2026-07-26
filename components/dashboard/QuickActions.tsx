@@ -1,7 +1,7 @@
 "use client";
 
 import { GlassCard } from "@/components/ui/glass-card";
-import { PlusCircle, Grid2x2, ChefHat, Package, Users, Zap, Loader2 } from "lucide-react";
+import { PlusCircle, Grid2x2, ChefHat, Zap, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useTransition } from "react";
@@ -14,8 +14,6 @@ const ACTIONS = [
   { label: "Start New Order", icon: PlusCircle, href: "/tables", color: "text-emerald-400", bg: "bg-emerald-400/10" },
   { label: "Manage Tables", icon: Grid2x2, href: "/tables", color: "text-blue-400", bg: "bg-blue-400/10" },
   { label: "Kitchen Display", icon: ChefHat, href: "/kitchen", color: "text-orange-400", bg: "bg-orange-400/10" },
-  { label: "Inventory", icon: Package, href: "/inventory", color: "text-purple-400", bg: "bg-purple-400/10" },
-  { label: "Customers", icon: Users, href: "/customers", color: "text-pink-400", bg: "bg-pink-400/10" },
 ];
 
 export function QuickActions() {

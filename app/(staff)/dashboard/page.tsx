@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { SummaryRow } from "@/components/dashboard/SummaryRow";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { RecentOrders } from "@/components/dashboard/RecentOrders";
-import { KitchenStatus } from "@/components/dashboard/KitchenStatus";
+import { InventoryAlerts } from "@/components/dashboard/InventoryAlerts";
 import { RestaurantOverview } from "@/components/dashboard/RestaurantOverview";
 import { StaffOnDuty } from "@/components/dashboard/StaffOnDuty";
 import { ActivityTimeline } from "@/components/dashboard/ActivityTimeline";
@@ -122,11 +122,11 @@ export default async function DashboardPage() {
             <div className="md:col-span-2">
               <QuickActions />
             </div>
-            <div className="h-64">
+            <div className="h-52">
               <RecentOrders orders={recentOrders} />
             </div>
-            <div className="h-64">
-              <KitchenStatus activeTicketsCount={activeTicketsCount} />
+            <div className="h-52">
+              <InventoryAlerts />
             </div>
           </div>
         </div>

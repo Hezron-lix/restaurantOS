@@ -1,9 +1,10 @@
 "use client";
 
 import { GlassCard } from "@/components/ui/glass-card";
-import { DollarSign, Receipt, Grid2x2, Package } from "lucide-react";
+import { DollarSign, Receipt, Grid2x2 } from "lucide-react";
 import { useRestaurant } from "@/components/providers/staff-providers";
 import { NumberTicker } from "@/components/ui/number-ticker";
+import { KitchenStatus } from "@/components/dashboard/KitchenStatus";
 
 interface SummaryRowProps {
   activeOrdersCount: number;
@@ -36,14 +37,7 @@ export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTables
       suffix: ` / ${totalTablesCount}`,
       icon: Grid2x2,
       trend: occupiedTablesCount > 0 ? `${totalTablesCount - occupiedTablesCount} tables available` : "All tables available",
-    },
-    {
-      title: "Inventory Alerts",
-      value: 0,
-      icon: Package,
-      trend: "Inventory healthy",
-      badge: "Demo",
-    },
+    }
   ];
 
   return (
@@ -55,11 +49,6 @@ export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTables
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-zinc-400">{stat.title}</span>
-                {stat.badge && (
-                  <span className="px-1.5 py-0.5 rounded-md bg-brand/10 text-brand text-[10px] font-bold uppercase tracking-wider">
-                    {stat.badge}
-                  </span>
-                )}
               </div>
               <div className="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center shrink-0">
                 <Icon className="w-4 h-4" />
@@ -78,6 +67,9 @@ export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTables
           </GlassCard>
         );
       })}
+      <div className="h-32">
+        <KitchenStatus activeTicketsCount={activeOrdersCount} />
+      </div>
     </div>
   );
 }

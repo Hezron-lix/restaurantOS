@@ -160,5 +160,13 @@ export async function updateTableOccupancyStatus(
     throw new DomainError('INTERNAL_ERROR', `Failed to update table floor status: ${error?.message}`);
   }
 
+  if (targetStatus === 'AVAILABLE') {
+    await supabase
+      .from('orders')
+      .update({ status: 'BILLED' })
+      .eq('table_id', tableId)
+      .eq('status', 'SERVED');
+  }
+
   return data as TableRecord;
 }
