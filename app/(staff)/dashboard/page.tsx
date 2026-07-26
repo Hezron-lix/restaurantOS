@@ -61,8 +61,20 @@ export default async function DashboardPage() {
     total_cents: o.total_cents,
     created_at: o.created_at
   }));
-  
   const activeOrdersCount = recentOrders.filter(o => ['PLACED', 'PREPARING', 'READY'].includes(o.status)).length;
+  
+  // Calculate today's revenue
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const { data: todayOrders } = await supabase
+    .from('orders')
+    .select('total_cents')
+    .eq('restaurant_id', profile.restaurant_id)
+    .gte('created_at', today.toISOString());
+    
+  const revenueTodayCents = (todayOrders || []).reduce((sum, o) => sum + (o.total_cents || 0), 0);
+  const revenueToday = revenueTodayCents / 100;
 
   // Fetch recent activities
   const { data: activitiesData } = await supabase
@@ -86,6 +98,7 @@ export default async function DashboardPage() {
         activeOrdersCount={activeOrdersCount}
         occupiedTablesCount={occupiedTablesCount}
         totalTablesCount={totalTablesCount}
+        revenueToday={revenueToday}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

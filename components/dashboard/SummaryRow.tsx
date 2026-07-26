@@ -3,39 +3,43 @@
 import { GlassCard } from "@/components/ui/glass-card";
 import { DollarSign, Receipt, Grid2x2, Package } from "lucide-react";
 import { useRestaurant } from "@/components/providers/staff-providers";
+import { NumberTicker } from "@/components/ui/number-ticker";
 
 interface SummaryRowProps {
   activeOrdersCount: number;
   occupiedTablesCount: number;
   totalTablesCount: number;
+  revenueToday: number;
 }
 
-export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTablesCount }: SummaryRowProps) {
+export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTablesCount, revenueToday }: SummaryRowProps) {
   const { restaurant } = useRestaurant();
   const currencySymbol = restaurant?.currency === "USD" ? "$" : (restaurant?.currency || "$");
 
   const stats = [
     {
       title: "Revenue Today",
-      value: `${currencySymbol}0.00`,
+      value: revenueToday,
+      isCurrency: true,
       icon: DollarSign,
       trend: "No data yet",
     },
     {
       title: "Active Orders",
-      value: activeOrdersCount.toString(),
+      value: activeOrdersCount,
       icon: Receipt,
       trend: activeOrdersCount > 0 ? "Currently processing" : "Start a service to track",
     },
     {
       title: "Occupied Tables",
-      value: `${occupiedTablesCount} / ${totalTablesCount}`,
+      value: occupiedTablesCount,
+      suffix: ` / ${totalTablesCount}`,
       icon: Grid2x2,
       trend: occupiedTablesCount > 0 ? `${totalTablesCount - occupiedTablesCount} tables available` : "All tables available",
     },
     {
       title: "Inventory Alerts",
-      value: "0",
+      value: 0,
       icon: Package,
       trend: "Stock looks good",
     },
@@ -54,7 +58,13 @@ export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTables
               </div>
             </div>
             <div>
-              <p className="text-2xl font-bold text-zinc-100">{stat.value}</p>
+              <p className="text-2xl font-bold text-zinc-100 flex items-center">
+                <NumberTicker 
+                  value={stat.value as number} 
+                  prefix={stat.isCurrency ? currencySymbol : ""} 
+                  suffix={stat.suffix || ""}
+                />
+              </p>
               <p className="text-xs text-zinc-500 mt-1">{stat.trend}</p>
             </div>
           </GlassCard>

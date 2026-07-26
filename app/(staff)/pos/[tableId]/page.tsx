@@ -2,7 +2,9 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { PosInterface } from "@/components/pos/PosInterface";
 
-export default async function PosPage({ params }: { params: { tableId: string } }) {
+export default async function PosPage({ params }: { params: Promise<{ tableId: string }> }) {
+  const resolvedParams = await params;
+  const tableId = resolvedParams.tableId;
   const supabase = await createServerSupabaseClient();
   
   const { data: { user } } = await supabase.auth.getUser();
@@ -20,7 +22,7 @@ export default async function PosPage({ params }: { params: { tableId: string } 
   const { data: table } = await supabase
     .from("tables")
     .select("id, table_number, status")
-    .eq("id", params.tableId)
+    .eq("id", tableId)
     .single();
 
   if (!table) redirect('/tables');
@@ -29,7 +31,7 @@ export default async function PosPage({ params }: { params: { tableId: string } 
   const { data: order } = await supabase
     .from("orders")
     .select("id")
-    .eq("table_id", params.tableId)
+    .eq("table_id", tableId)
     .in("status", ["PLACED", "PREPARING"])
     .order("created_at", { ascending: false })
     .limit(1)

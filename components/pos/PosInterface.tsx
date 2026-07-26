@@ -3,11 +3,12 @@
 import { useState, useTransition } from "react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, ArrowLeft, Send, Loader2 } from "lucide-react";
+import { Plus, Minus, ArrowLeft, Send, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { submitOrderAction } from "@/app/actions/orders";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Category {
   id: string;
@@ -40,6 +41,7 @@ export function PosInterface({ tableId, tableNumber, orderId, categories, menuIt
   const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id || "");
   const [cart, setCart] = useState<OrderItem[]>([]);
   const [isPending, startTransition] = useTransition();
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const filteredItems = menuItems.filter(item => item.category_id === activeCategory);
 
@@ -76,7 +78,9 @@ export function PosInterface({ tableId, tableNumber, orderId, categories, menuIt
     startTransition(async () => {
       try {
         await submitOrderAction(tableId, orderId, cart, total);
+        setIsSuccess(true);
         toast.success("Order sent to kitchen");
+        // We let the server action handle the redirect, but the success state shows briefly
       } catch {
         toast.error("Failed to submit order");
       }
@@ -149,25 +153,34 @@ export function PosInterface({ tableId, tableNumber, orderId, categories, menuIt
                 Select items to add to order
               </div>
             ) : (
-              cart.map(item => (
-                <div key={item.menu_item_id} className="flex flex-col gap-2 p-3 bg-zinc-900/50 rounded-lg border border-white/5">
-                  <div className="flex justify-between items-start">
-                    <span className="font-medium text-zinc-200 text-sm flex-1">{item.name}</span>
-                    <span className="text-zinc-400 text-sm ml-2">{formatPrice(item.price_cents * item.quantity)}</span>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <div className="flex items-center gap-3 bg-zinc-950 rounded-lg border border-white/5 p-1">
-                      <button onClick={() => updateQuantity(item.menu_item_id, -1)} className="w-6 h-6 flex items-center justify-center rounded bg-zinc-800 text-zinc-400 hover:text-white">
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className="text-sm font-medium w-4 text-center">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.menu_item_id, 1)} className="w-6 h-6 flex items-center justify-center rounded bg-zinc-800 text-zinc-400 hover:text-white">
-                        <Plus className="w-3 h-3" />
-                      </button>
+              <AnimatePresence>
+                {cart.map(item => (
+                  <motion.div 
+                    key={item.menu_item_id}
+                    layout
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                    className="flex flex-col gap-2 p-3 bg-zinc-900/50 rounded-lg border border-white/5"
+                  >
+                    <div className="flex justify-between items-start">
+                      <span className="font-medium text-zinc-200 text-sm flex-1">{item.name}</span>
+                      <span className="text-zinc-400 text-sm ml-2">{formatPrice(item.price_cents * item.quantity)}</span>
                     </div>
-                  </div>
-                </div>
-              ))
+                    <div className="flex items-center justify-between mt-1">
+                      <div className="flex items-center gap-3 bg-zinc-950 rounded-lg border border-white/5 p-1">
+                        <button onClick={() => updateQuantity(item.menu_item_id, -1)} className="w-6 h-6 flex items-center justify-center rounded bg-zinc-800 text-zinc-400 hover:text-white transition-transform active:scale-90">
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="text-sm font-medium w-4 text-center">{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.menu_item_id, 1)} className="w-6 h-6 flex items-center justify-center rounded bg-zinc-800 text-zinc-400 hover:text-white transition-transform active:scale-90">
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             )}
           </div>
 
@@ -188,12 +201,28 @@ export function PosInterface({ tableId, tableNumber, orderId, categories, menuIt
             </div>
             
             <Button 
-              className="w-full bg-brand text-zinc-950 hover:bg-brand/90 py-6 text-lg"
-              disabled={cart.length === 0 || isPending}
+              className={cn(
+                "w-full py-6 text-lg transition-all duration-300 relative overflow-hidden",
+                isSuccess ? "bg-emerald-500 hover:bg-emerald-600 text-white" : "bg-brand text-zinc-950 hover:bg-brand/90"
+              )}
+              disabled={cart.length === 0 || isPending || isSuccess}
               onClick={handleSendToKitchen}
             >
-              {isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-5 h-5 mr-2" />}
-              Send to Kitchen
+              <AnimatePresence mode="wait">
+                {isSuccess ? (
+                  <motion.div key="success" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center">
+                    <CheckCircle2 className="w-5 h-5 mr-2" /> Sent!
+                  </motion.div>
+                ) : isPending ? (
+                  <motion.div key="loading" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center">
+                    <Loader2 className="w-5 h-5 animate-spin mr-2" /> Sending...
+                  </motion.div>
+                ) : (
+                  <motion.div key="default" initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center">
+                    <Send className="w-5 h-5 mr-2" /> Send to Kitchen
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </Button>
           </div>
         </div>

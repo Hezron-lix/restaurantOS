@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,45 +29,13 @@ const STEP_FIELDS: (keyof RestaurantOnboardingInput)[][] = [
   [],
 ];
 
-// ─── Instrumentation ──────────────────────────────────────────────────────────
-const log = (label: string, data?: Record<string, unknown>) => {
-  const trace = new Error().stack?.split('\n').slice(2, 5).join(' | ') ?? 'unknown';
-  console.group(`[OnboardingFlow] ${label} @ ${new Date().toISOString()}`);
-  if (data) console.log('Data:', data);
-  console.log('Trace:', trace);
-  console.groupEnd();
-};
-// ─────────────────────────────────────────────────────────────────────────────
-
 export function OnboardingFlow() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [isCreating, setIsCreating] = useState(false);
   
   // HARD GUARD: tracks whether a submission is in flight at the process level.
-  // Unlike isCreating (React state which batches), this ref is synchronous.
   const hasSubmittedRef = useRef(false);
-  
-  const renderCount = useRef(0);
-  renderCount.current += 1;
-
-  // Instrument: mount/unmount
-  useEffect(() => {
-    log('MOUNT', { renderCount: renderCount.current });
-    return () => {
-      log('UNMOUNT', { renderCount: renderCount.current });
-    };
-  }, []);
-
-  // Instrument: step changes
-  useEffect(() => {
-    log('currentStep changed', { currentStep, renderCount: renderCount.current });
-  }, [currentStep]);
-
-  // Instrument: isCreating changes
-  useEffect(() => {
-    log('isCreating changed', { isCreating, renderCount: renderCount.current });
-  }, [isCreating]);
 
   const {
     register,
@@ -87,92 +55,60 @@ export function OnboardingFlow() {
   });
 
   const nextStep = useCallback(async () => {
-    log('nextStep called', { currentStep, renderCount: renderCount.current });
     const fieldsToValidate = STEP_FIELDS[currentStep] ?? [];
     const isStepValid = await trigger(fieldsToValidate);
-    log('nextStep validation result', { isStepValid, fieldsToValidate });
     if (isStepValid) {
       setCurrentStep((prev) => Math.min(prev + 1, STEPS.length - 1));
     }
   }, [currentStep, trigger]);
 
   const prevStep = useCallback(() => {
-    log('prevStep called', { currentStep, isCreating, renderCount: renderCount.current });
     if (!isCreating) {
       setCurrentStep((prev) => Math.max(prev - 1, 0));
     }
-  }, [currentStep, isCreating]);
+  }, [isCreating]);
 
-  const handleCreateRestaurant = useCallback(
-    handleSubmit(async (data: RestaurantOnboardingInput) => {
-      log('handleCreateRestaurant ENTERED', {
-        currentStep,
-        isCreating,
-        hasSubmitted: hasSubmittedRef.current,
-        renderCount: renderCount.current,
-      });
+  const onSubmit = async (data: RestaurantOnboardingInput) => {
+    // Guard 1: must be on review step
+    if (currentStep !== STEPS.length - 1) return;
+    // Guard 2: idempotency
+    if (hasSubmittedRef.current) return;
+    // Guard 3: UI loading state already set  
+    if (isCreating) return;
 
-      // Guard 1: must be on review step
-      if (currentStep !== STEPS.length - 1) {
-        log('handleCreateRestaurant ABORTED – wrong step', { currentStep });
-        return;
-      }
+    hasSubmittedRef.current = true;
+    setIsCreating(true);
 
-      // Guard 2: idempotency – prevent re-submission if already submitted successfully
-      if (hasSubmittedRef.current) {
-        log('handleCreateRestaurant ABORTED – already submitted (ref guard)');
-        return;
-      }
+    try {
+      const response = await createRestaurantAction(data);
 
-      // Guard 3: UI loading state already set  
-      if (isCreating) {
-        log('handleCreateRestaurant ABORTED – isCreating already true');
-        return;
-      }
-
-      hasSubmittedRef.current = true;
-      setIsCreating(true);
-
-      log('createRestaurantAction CALLING', { timestamp: new Date().toISOString() });
-
-      try {
-        const response = await createRestaurantAction(data);
-
-        log('createRestaurantAction RETURNED', { success: response.success });
-
-        if (!response.success) {
-          toast.error("Submission failed", {
-            description: response.error.message,
-            duration: 6000,
-          });
-          // Reset guard on failure so user can retry
-          hasSubmittedRef.current = false;
-          setIsCreating(false);
-          return;
-        }
-
-        toast.success("Restaurant Created!", {
-          description: "Redirecting to your dashboard…",
-        });
-
-        // Navigate immediately — do NOT call router.refresh() before push,
-        // as that triggers a server re-render of the current route which can
-        // unmount and remount this component while isCreating is still true,
-        // potentially re-entering the handler.
-        router.push("/dashboard");
-
-      } catch (err) {
-        log('createRestaurantAction THREW', { error: String(err) });
-        toast.error("Unexpected error", {
-          description: "An unexpected error occurred. Please try again.",
+      if (!response.success) {
+        toast.error("Submission failed", {
+          description: response.error.message,
+          duration: 6000,
         });
         hasSubmittedRef.current = false;
         setIsCreating(false);
+        return;
       }
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentStep, isCreating, handleSubmit, router]
-  );
+
+      toast.success("Restaurant Created!", {
+        description: "Redirecting to your dashboard…",
+      });
+
+      router.push("/dashboard");
+    } catch {
+      toast.error("Unexpected error", {
+        description: "An unexpected error occurred. Please try again.",
+      });
+      hasSubmittedRef.current = false;
+      setIsCreating(false);
+    }
+  };
+
+  const handleCreateRestaurant = (e?: React.BaseSyntheticEvent) => {
+    handleSubmit(onSubmit)(e);
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto">

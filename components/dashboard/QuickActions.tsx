@@ -1,9 +1,13 @@
 "use client";
 
 import { GlassCard } from "@/components/ui/glass-card";
-import { PlusCircle, Grid2x2, ChefHat, Package, Users } from "lucide-react";
+import { PlusCircle, Grid2x2, ChefHat, Package, Users, Zap, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useTransition } from "react";
+import { enableDemoModeAction } from "@/app/actions/demo";
+import { toast } from "sonner";
+import { useRestaurant } from "@/components/providers/staff-providers";
 
 const ACTIONS = [
   { label: "New Order", icon: PlusCircle, href: "/tables", color: "text-emerald-400", bg: "bg-emerald-400/10" },
@@ -14,6 +18,21 @@ const ACTIONS = [
 ];
 
 export function QuickActions() {
+  const [isPending, startTransition] = useTransition();
+  const { restaurant } = useRestaurant();
+
+  const handleDemoMode = () => {
+    if (!restaurant) return;
+    startTransition(async () => {
+      try {
+        await enableDemoModeAction(restaurant.id);
+        toast.success("Demo Mode Activated! Reality warped.");
+      } catch {
+        toast.error("Failed to activate Demo Mode.");
+      }
+    });
+  };
+
   return (
     <GlassCard className="p-6">
       <h3 className="text-lg font-semibold text-zinc-100 mb-4">Quick Actions</h3>
@@ -28,6 +47,14 @@ export function QuickActions() {
             </div>
           </Link>
         ))}
+        
+        {/* Demo Mode Button */}
+        <button onClick={handleDemoMode} disabled={isPending} className="flex items-center gap-3 p-3 rounded-lg border border-brand/30 bg-brand/5 hover:bg-brand/10 transition-all group active:scale-95 text-left">
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 bg-brand/20 text-brand relative overflow-hidden">
+             {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
+          </div>
+          <span className="text-sm font-bold text-brand group-hover:text-brand">Activate Demo Mode</span>
+        </button>
       </div>
     </GlassCard>
   );

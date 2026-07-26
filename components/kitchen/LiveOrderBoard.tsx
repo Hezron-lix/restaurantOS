@@ -7,6 +7,7 @@ import { Clock, CheckCircle2, ChevronRight, Utensils } from "lucide-react";
 import { toast } from "sonner";
 import { updateOrderStatusAction } from "@/app/actions/orders";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface OrderItem {
   id: string;
@@ -40,7 +41,7 @@ export function LiveOrderBoard({ initialOrders }: { initialOrders: Order[] }) {
       try {
         await updateOrderStatusAction(orderId, newStatus);
         toast.success(`Order bumped to ${newStatus}`);
-      } catch (_error) {
+      } catch {
         toast.error("Failed to update order status");
       }
     });
@@ -60,8 +61,9 @@ export function LiveOrderBoard({ initialOrders }: { initialOrders: Order[] }) {
     
     return (
       <GlassCard className={cn(
-        "flex flex-col h-full border transition-all duration-300",
-        isReady ? "border-emerald-500/30 bg-emerald-500/5" : (isUrgent ? "border-orange-500/50 bg-orange-500/5" : "border-white/10 bg-zinc-900/50")
+        "flex flex-col h-full border transition-all duration-300 relative overflow-hidden",
+        isReady ? "border-emerald-500/30 bg-emerald-500/5" : (isUrgent ? "border-orange-500/50 bg-orange-500/5" : "border-white/10 bg-zinc-900/50"),
+        !isReady && "animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite]"
       )}>
         <div className={cn(
           "px-4 py-3 border-b flex justify-between items-center",
@@ -142,11 +144,20 @@ export function LiveOrderBoard({ initialOrders }: { initialOrders: Order[] }) {
           </span>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {preparingOrders.map(order => (
-            <div key={order.id} className="h-[400px]">
-              <OrderCard order={order} />
-            </div>
-          ))}
+          <AnimatePresence mode="popLayout">
+            {preparingOrders.map(order => (
+              <motion.div 
+                layout
+                key={order.id} 
+                initial={{ opacity: 0, x: -50, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                className="h-[400px]"
+              >
+                <OrderCard order={order} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
           {preparingOrders.length === 0 && (
             <div className="h-full flex items-center justify-center text-zinc-500">
               No orders preparing
@@ -167,11 +178,20 @@ export function LiveOrderBoard({ initialOrders }: { initialOrders: Order[] }) {
           </span>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {readyOrders.map(order => (
-            <div key={order.id} className="h-[400px]">
-              <OrderCard order={order} isReady={true} />
-            </div>
-          ))}
+          <AnimatePresence mode="popLayout">
+            {readyOrders.map(order => (
+              <motion.div 
+                layout
+                key={order.id} 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, y: -50, scale: 0.95, transition: { duration: 0.2 } }}
+                className="h-[400px]"
+              >
+                <OrderCard order={order} isReady={true} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
           {readyOrders.length === 0 && (
             <div className="h-full flex items-center justify-center text-zinc-500">
               No orders waiting

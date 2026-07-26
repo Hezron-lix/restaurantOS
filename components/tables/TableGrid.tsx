@@ -45,12 +45,12 @@ export function TableGrid({ tables }: { tables: Table[] }) {
             key={table.id}
             onClick={() => handleTableClick(table)}
             className={cn(
-              "p-6 cursor-pointer transition-all duration-200 border flex flex-col items-center justify-center min-h-[160px] relative group",
+              "p-6 cursor-pointer transition-all duration-300 border flex flex-col items-center justify-center min-h-[160px] relative group active:scale-95",
               isAvailable && "hover:bg-brand/5 border-white/5 hover:border-brand/30",
-              isSeated && "bg-orange-500/10 border-orange-500/30 hover:border-orange-500/50",
-              isPreparing && "bg-yellow-500/10 border-yellow-500/30 hover:border-yellow-500/50",
-              isReady && "bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/50",
-              !isInteractive && "opacity-50 cursor-not-allowed bg-zinc-900 border-white/5"
+              isSeated && "bg-orange-500/10 border-orange-500/30 hover:border-orange-500/50 animate-[pulse_3s_ease-in-out_infinite]",
+              isPreparing && "bg-yellow-500/10 border-yellow-500/30 hover:border-yellow-500/50 animate-[pulse_3s_ease-in-out_infinite]",
+              isReady && "bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/50 animate-[pulse_3s_ease-in-out_infinite]",
+              !isInteractive && "opacity-50 cursor-not-allowed bg-zinc-900 border-white/5 active:scale-100"
             )}
           >
             {isPending && isAvailable && (
