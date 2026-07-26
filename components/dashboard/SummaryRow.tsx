@@ -22,7 +22,7 @@ export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTables
       value: revenueToday,
       isCurrency: true,
       icon: DollarSign,
-      trend: "No data yet",
+      trend: revenueToday > 0 ? "Today's total earnings" : "No sales yet today",
     },
     {
       title: "Active Orders",

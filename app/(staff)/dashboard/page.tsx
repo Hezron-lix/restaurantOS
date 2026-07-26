@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import { SummaryRow } from "@/components/dashboard/SummaryRow";
 import { QuickActions } from "@/components/dashboard/QuickActions";
@@ -28,8 +29,10 @@ export default async function DashboardPage() {
     redirect('/onboarding');
   }
 
+  const admin = createAdminSupabaseClient();
+
   // Fetch all staff members belonging to the same restaurant
-  const { data: staffData } = await supabase
+  const { data: staffData } = await admin
     .from('profiles')
     .select('id, full_name, role')
     .eq('restaurant_id', profile.restaurant_id)
@@ -37,7 +40,7 @@ export default async function DashboardPage() {
   const staff = staffData || [];
 
   // Fetch Table metrics
-  const { data: tablesData } = await supabase
+  const { data: tablesData } = await admin
     .from('tables')
     .select('id, status')
     .eq('restaurant_id', profile.restaurant_id);
@@ -47,10 +50,11 @@ export default async function DashboardPage() {
   const occupiedTablesCount = tables.filter(t => t.status !== 'AVAILABLE').length;
 
   // Fetch Order metrics
-  const { data: recentOrdersData } = await supabase
+  const { data: recentOrdersData } = await admin
     .from('orders')
     .select('id, table_id, status, total_cents, created_at, tables(table_number)')
     .eq('restaurant_id', profile.restaurant_id)
+    .gt('total_cents', 0)
     .order('created_at', { ascending: false })
     .limit(5);
     
@@ -61,23 +65,33 @@ export default async function DashboardPage() {
     total_cents: o.total_cents,
     created_at: o.created_at
   }));
-  const activeOrdersCount = recentOrders.filter(o => ['PLACED', 'PREPARING', 'READY'].includes(o.status)).length;
   
-  // Calculate today's revenue
+  // Kitchen active tickets (PREPARING, READY)
+  const { data: kitchenOrders } = await admin
+    .from('orders')
+    .select('id')
+    .eq('restaurant_id', profile.restaurant_id)
+    .in('status', ['PREPARING', 'READY']);
+    
+  const activeTicketsCount = kitchenOrders?.length || 0;
+  const activeOrdersCount = activeTicketsCount;
+  
+  // Calculate today's revenue (only completed/billed/served orders count as realized revenue)
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
-  const { data: todayOrders } = await supabase
+  const { data: todayOrders } = await admin
     .from('orders')
     .select('total_cents')
     .eq('restaurant_id', profile.restaurant_id)
+    .in('status', ['BILLED', 'SERVED'])
     .gte('created_at', today.toISOString());
     
   const revenueTodayCents = (todayOrders || []).reduce((sum, o) => sum + (o.total_cents || 0), 0);
   const revenueToday = revenueTodayCents / 100;
 
   // Fetch recent activities
-  const { data: activitiesData } = await supabase
+  const { data: activitiesData } = await admin
     .from('restaurant_activities')
     .select('*')
     .eq('restaurant_id', profile.restaurant_id)
@@ -112,7 +126,7 @@ export default async function DashboardPage() {
               <RecentOrders orders={recentOrders} />
             </div>
             <div className="h-64">
-              <KitchenStatus />
+              <KitchenStatus activeTicketsCount={activeTicketsCount} />
             </div>
           </div>
         </div>

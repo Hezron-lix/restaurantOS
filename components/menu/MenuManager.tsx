@@ -9,6 +9,9 @@ import { toast } from "sonner";
 import { createMenuCategoryAction, createMenuItemAction, toggleMenuItemAvailabilityAction } from "@/app/actions/menu";
 import { cn } from "@/lib/utils";
 
+import { CurrencyDisplay } from "@/components/shared/CurrencyDisplay";
+import { useRestaurant } from "@/components/providers/staff-providers";
+
 interface MenuItem {
   id: string;
   category_id: string;
@@ -182,7 +185,7 @@ export function MenuManager({ restaurantId, categories }: MenuManagerProps) {
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-zinc-400">Price ($)</label>
+                    <label className="text-xs text-zinc-400">Price</label>
                     <Input 
                       value={newItemPrice}
                       onChange={e => setNewItemPrice(e.target.value)}
@@ -218,7 +221,7 @@ export function MenuManager({ restaurantId, categories }: MenuManagerProps) {
                   <div className="flex justify-between items-start">
                     <h3 className="font-semibold text-zinc-200">{item.name}</h3>
                     <span className="font-medium text-brand bg-brand/10 px-2 py-0.5 rounded text-sm">
-                      ${(item.price_cents / 100).toFixed(2)}
+                      <CurrencyDisplay cents={item.price_cents} />
                     </span>
                   </div>
                   {item.description && <p className="text-sm text-zinc-500 mt-2 line-clamp-2">{item.description}</p>}

@@ -5,6 +5,7 @@ import { PlusCircle, Grid2x2, ChefHat, Package, Users, Zap, Loader2 } from "luci
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { enableDemoModeAction } from "@/app/actions/demo";
 import { toast } from "sonner";
 import { useRestaurant } from "@/components/providers/staff-providers";
@@ -20,6 +21,7 @@ const ACTIONS = [
 export function QuickActions() {
   const [isPending, startTransition] = useTransition();
   const { restaurant } = useRestaurant();
+  const router = useRouter();
 
   const handleDemoMode = () => {
     if (!restaurant) return;
@@ -27,6 +29,7 @@ export function QuickActions() {
       try {
         await enableDemoModeAction(restaurant.id);
         toast.success("Demo Mode Activated! Reality warped.");
+        router.refresh();
       } catch {
         toast.error("Failed to activate Demo Mode.");
       }

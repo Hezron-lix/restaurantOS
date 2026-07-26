@@ -10,8 +10,16 @@ export type Permission =
   | "create:orders"
   | "edit:orders"
   | "delete:orders"
+  | "manage:orders"
   | "view:kds"
   | "update:kds"
+  | "manage:kitchen"
+  | "manage:tables"
+  | "manage:reservations"
+  | "manage:customers"
+  | "manage:staff"
+  | "view:analytics"
+  | "manage:ai"
   | "process:payments"
   | "view:reports";
 
@@ -19,17 +27,20 @@ export type Permission =
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   manager: [
     "view:dashboard", "manage:users", "manage:menu", "manage:inventory",
-    "view:orders", "create:orders", "edit:orders", "delete:orders",
-    "view:kds", "update:kds", "process:payments", "view:reports"
+    "view:orders", "create:orders", "edit:orders", "delete:orders", "manage:orders",
+    "view:kds", "update:kds", "manage:kitchen", "manage:tables", "manage:reservations",
+    "manage:customers", "manage:staff", "view:analytics", "manage:ai",
+    "process:payments", "view:reports"
   ],
   waiter: [
-    "view:dashboard", "view:orders", "create:orders", "edit:orders", "process:payments"
+    "view:dashboard", "view:orders", "create:orders", "edit:orders", "manage:orders",
+    "manage:tables", "process:payments"
   ],
   kitchen: [
-    "view:kds", "update:kds", "view:orders"
+    "view:kds", "update:kds", "manage:kitchen", "view:orders"
   ],
   cashier: [
-    "view:dashboard", "view:orders", "process:payments"
+    "view:dashboard", "view:orders", "process:payments", "manage:orders"
   ],
   guest: []
 };

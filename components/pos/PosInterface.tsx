@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus, ArrowLeft, Send, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { submitOrderAction } from "@/app/actions/orders";
 import { toast } from "sonner";
+import { formatCurrency } from "@/lib/format";
+import { useRestaurant } from "@/components/providers/staff-providers";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -42,6 +45,7 @@ export function PosInterface({ tableId, tableNumber, orderId, categories, menuIt
   const [cart, setCart] = useState<OrderItem[]>([]);
   const [isPending, startTransition] = useTransition();
   const [isSuccess, setIsSuccess] = useState(false);
+  const router = useRouter();
 
   const filteredItems = menuItems.filter(item => item.category_id === activeCategory);
 
@@ -79,15 +83,18 @@ export function PosInterface({ tableId, tableNumber, orderId, categories, menuIt
       try {
         await submitOrderAction(tableId, orderId, cart, total);
         setIsSuccess(true);
-        toast.success("Order sent to kitchen");
-        // We let the server action handle the redirect, but the success state shows briefly
+        toast.success("Order sent to kitchen!");
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 500);
       } catch {
         toast.error("Failed to submit order");
       }
     });
   };
 
-  const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+  const { restaurant } = useRestaurant();
+  const formatPrice = (cents: number) => formatCurrency(cents, restaurant?.currency || 'USD');
 
   return (
     <div className="flex flex-col h-[calc(100vh-100px)] -mx-6 md:-mx-8">

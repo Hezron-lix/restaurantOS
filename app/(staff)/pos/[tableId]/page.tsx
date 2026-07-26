@@ -32,7 +32,7 @@ export default async function PosPage({ params }: { params: Promise<{ tableId: s
     .from("orders")
     .select("id")
     .eq("table_id", tableId)
-    .in("status", ["PLACED", "PREPARING"])
+    .in("status", ["PLACED", "PREPARING", "READY"])
     .order("created_at", { ascending: false })
     .limit(1)
     .single();

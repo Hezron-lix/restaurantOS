@@ -1,10 +1,11 @@
 "use client";
 
 import { useTransition } from "react";
-import { openTableAction } from "@/app/actions/orders";
+import { openTableAction, clearTableAction } from "@/app/actions/orders";
 import { GlassCard } from "@/components/ui/glass-card";
-import { Users, Loader2 } from "lucide-react";
+import { Users, Loader2, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 interface Table {
@@ -27,6 +28,12 @@ export function TableGrid({ tables }: { tables: Table[] }) {
       });
     } else if (table.status === "SEATED" || table.status === "PREPARING" || table.status === "READY") {
       router.push(`/pos/${table.id}`);
+    } else if (table.status === "DIRTY") {
+      startTransition(async () => {
+        await clearTableAction(table.id);
+        toast.success(`Table ${table.table_number} cleaned & available!`);
+        router.refresh();
+      });
     }
   };
 
@@ -37,8 +44,9 @@ export function TableGrid({ tables }: { tables: Table[] }) {
         const isSeated = table.status === "SEATED";
         const isPreparing = table.status === "PREPARING";
         const isReady = table.status === "READY";
+        const isDirty = table.status === "DIRTY";
         
-        const isInteractive = isAvailable || isSeated || isPreparing || isReady;
+        const isInteractive = isAvailable || isSeated || isPreparing || isReady || isDirty;
         
         return (
           <GlassCard 
@@ -50,10 +58,11 @@ export function TableGrid({ tables }: { tables: Table[] }) {
               isSeated && "bg-orange-500/10 border-orange-500/30 hover:border-orange-500/50 animate-[pulse_3s_ease-in-out_infinite]",
               isPreparing && "bg-yellow-500/10 border-yellow-500/30 hover:border-yellow-500/50 animate-[pulse_3s_ease-in-out_infinite]",
               isReady && "bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/50 animate-[pulse_3s_ease-in-out_infinite]",
+              isDirty && "bg-zinc-800/80 border-zinc-700/50 hover:border-brand/40 hover:bg-zinc-800",
               !isInteractive && "opacity-50 cursor-not-allowed bg-zinc-900 border-white/5 active:scale-100"
             )}
           >
-            {isPending && isAvailable && (
+            {isPending && (
               <div className="absolute inset-0 bg-zinc-950/50 flex items-center justify-center rounded-xl backdrop-blur-sm z-10">
                 <Loader2 className="w-6 h-6 animate-spin text-brand" />
               </div>

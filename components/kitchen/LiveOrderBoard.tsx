@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Clock, CheckCircle2, ChevronRight, Utensils } from "lucide-react";
@@ -29,6 +30,12 @@ interface Order {
 export function LiveOrderBoard({ initialOrders }: { initialOrders: Order[] }) {
   const [isPending, startTransition] = useTransition();
   const [now, setNow] = useState(new Date());
+  const [orders, setOrders] = useState<Order[]>(initialOrders);
+  const router = useRouter();
+
+  useEffect(() => {
+    setOrders(initialOrders);
+  }, [initialOrders]);
 
   // Update timers every minute
   useEffect(() => {
@@ -37,12 +44,17 @@ export function LiveOrderBoard({ initialOrders }: { initialOrders: Order[] }) {
   }, []);
 
   const handleUpdateStatus = (orderId: string, newStatus: string) => {
+    // Optimistic UI update
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+
     startTransition(async () => {
       try {
         await updateOrderStatusAction(orderId, newStatus);
         toast.success(`Order bumped to ${newStatus}`);
+        router.refresh();
       } catch {
         toast.error("Failed to update order status");
+        setOrders(initialOrders);
       }
     });
   };
@@ -52,8 +64,8 @@ export function LiveOrderBoard({ initialOrders }: { initialOrders: Order[] }) {
     return elapsedMinutes;
   };
 
-  const preparingOrders = initialOrders.filter(o => o.status === "PREPARING");
-  const readyOrders = initialOrders.filter(o => o.status === "READY");
+  const preparingOrders = orders.filter(o => o.status === "PREPARING");
+  const readyOrders = orders.filter(o => o.status === "READY");
 
   const OrderCard = ({ order, isReady }: { order: Order, isReady?: boolean }) => {
     const elapsed = getElapsedTime(order.created_at);

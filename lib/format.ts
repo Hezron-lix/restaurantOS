@@ -10,19 +10,21 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Converts integer cents to a formatted USD currency string.
- * RULE: This is the ONLY place in the codebase that may divide cents by 100.
- *
- * @example formatCurrency(1450) → "$14.50"
- * @example formatCurrency(0)    → "$0.00"
+ * Converts integer cents to a formatted currency string using ISO currency code.
+ * @example formatCurrency(1450, 'USD') → "$14.50"
+ * @example formatCurrency(1450, 'INR') → "₹14.50"
  */
-export function formatCurrency(cents: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(cents / 100);
+export function formatCurrency(cents: number, currency: string = 'USD'): string {
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency || 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(cents / 100);
+  } catch {
+    return `${currency || '$'}${(cents / 100).toFixed(2)}`;
+  }
 }
 
 /**

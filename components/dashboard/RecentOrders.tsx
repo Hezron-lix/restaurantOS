@@ -5,6 +5,8 @@ import { Receipt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+import { CurrencyDisplay } from "@/components/shared/CurrencyDisplay";
+
 interface Order {
   id: string;
   table_number?: number;
@@ -57,9 +59,7 @@ export function RecentOrders({ orders = [] }: { orders?: Order[] }) {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-emerald-400">
-                  ${(order.total_cents / 100).toFixed(2)}
-                </p>
+                <CurrencyDisplay cents={order.total_cents} className="text-emerald-400 text-sm font-semibold" />
               </div>
             </div>
           ))}

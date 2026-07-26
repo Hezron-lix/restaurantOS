@@ -1,6 +1,7 @@
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { logActivityAction } from "./activity";
@@ -111,14 +112,14 @@ export async function submitOrderAction(tableId: string, orderId: string, items:
   revalidatePath("/tables");
   revalidatePath("/dashboard");
 
-  redirect("/dashboard");
+  return { success: true };
 }
 
 export async function updateOrderStatusAction(orderId: string, newStatus: string) {
-  const supabase = await createServerSupabaseClient();
+  const admin = createAdminSupabaseClient();
   
   // 1. Get order details
-  const { data: order } = await supabase
+  const { data: order } = await admin
     .from("orders")
     .select("restaurant_id, table_id")
     .eq("id", orderId)
@@ -127,7 +128,7 @@ export async function updateOrderStatusAction(orderId: string, newStatus: string
   if (!order) throw new Error("Order not found");
 
   // 2. Update order status
-  const { error } = await supabase
+  const { error } = await admin
     .from("orders")
     .update({ status: newStatus as OrderStatus })
     .eq("id", orderId);
@@ -136,7 +137,7 @@ export async function updateOrderStatusAction(orderId: string, newStatus: string
 
   // 3. Update table status accordingly
   if (newStatus === "READY") {
-    await supabase.from("tables").update({ status: "READY" }).eq("id", order.table_id);
+    await admin.from("tables").update({ status: "READY" }).eq("id", order.table_id);
     
     // Log Activity
     if (order.restaurant_id) {
@@ -152,7 +153,7 @@ export async function updateOrderStatusAction(orderId: string, newStatus: string
     }
   } else if (newStatus === "SERVED") {
     // A served order means the guests are eating, table is SEATED (or DIRTY if completed)
-    await supabase.from("tables").update({ status: "DIRTY" }).eq("id", order.table_id);
+    await admin.from("tables").update({ status: "DIRTY" }).eq("id", order.table_id);
     
     if (order.restaurant_id) {
       await logActivityAction({
@@ -167,6 +168,16 @@ export async function updateOrderStatusAction(orderId: string, newStatus: string
     }
   }
 
-  // Not calling redirect here, just letting the client useTransition handle it.
-  // The global RealtimeRefresher will trigger router.refresh() automatically when DB updates!
+  revalidatePath("/kitchen");
+  revalidatePath("/tables");
+  revalidatePath("/dashboard");
 }
+
+export async function clearTableAction(tableId: string) {
+  const supabase = await createServerSupabaseClient();
+  await supabase.from("tables").update({ status: "AVAILABLE" }).eq("id", tableId);
+  revalidatePath("/tables");
+  revalidatePath("/dashboard");
+}
+
+
