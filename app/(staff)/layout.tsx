@@ -15,6 +15,7 @@ import { StaffProviders } from '@/components/providers/staff-providers';
 import { CommandPalette } from '@/components/shell/CommandPalette';
 import { RealtimeRefresher } from '@/components/providers/RealtimeRefresher';
 import type { UserRole, RestaurantRecord } from '@/types/database';
+import { getAuthWorkspace } from '@/lib/auth/onboarding';
 
 export default async function StaffLayout({
   children,
@@ -28,33 +29,14 @@ export default async function StaffLayout({
     redirect('/login');
   }
 
-  // Fetch profile for display name and role
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, role, restaurant_id')
-    .eq('id', user.id)
-    .single();
+  const { profile, restaurant, requiresOnboarding } = await getAuthWorkspace(supabase, user.id);
+
+  if (requiresOnboarding) {
+    redirect('/onboarding');
+  }
 
   const userName = profile?.full_name ?? user.email ?? 'Staff';
   const userRole = (profile?.role ?? 'guest') as UserRole;
-
-  // Restaurant Check
-  // If the user has no restaurant_id, they haven't been assigned to a restaurant.
-  if (!profile?.restaurant_id) {
-    redirect('/onboarding');
-  }
-
-  // Fetch the restaurant
-  const { data: restaurant } = await supabase
-    .from('restaurants')
-    .select('*')
-    .eq('id', profile.restaurant_id)
-    .single();
-
-  if (!restaurant) {
-    // Failsafe in case restaurant was deleted but profile wasn't updated
-    redirect('/onboarding');
-  }
 
   return (
     <StaffProviders initialSession={{ user, profile }} initialRestaurant={restaurant as RestaurantRecord}>
