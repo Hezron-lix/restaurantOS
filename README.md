@@ -1,82 +1,543 @@
-# 🍽️ RestaurantOS: Smart Restaurant Management System
+<div align="center">
 
-> An innovative, AI-powered Restaurant Operating System built for the **Smart Restaurant Management System Hackathon**. Designed to eradicate traditional back-of-house bottlenecks through real-time multi-role synchronization and proactive AI operational intelligence.
+<img src="https://via.placeholder.com/120x120.png?text=ROS" alt="RestaurantOS logo" width="120" />
+
+# RestaurantOS
+
+### The AI-Powered Operating System for Modern Restaurants
+
+*One platform. Every operation. Zero disconnects.*
+
+<br/>
+
+[![Built with Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-149ECA?style=for-the-badge&logo=react&logoColor=white)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Google Gemini](https://img.shields.io/badge/Gemini-AI-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](#-license)
+
+<br/>
+
+**Built for VibeAthon 6.0** — *Smart Restaurant Management System*
+
+</div>
+
+<br/>
+
+> **"Restaurants don't need more software. They need one system that actually talks to itself."**
+
+RestaurantOS replaces the patchwork of disconnected tools — a POS here, a spreadsheet there, a group chat for the kitchen — with a single, real-time operating system for restaurant staff. Tables, orders, kitchen tickets, analytics, and an AI copilot all read and write to the same source of truth, so nothing gets lost between the front of house and the back.
+
+This is **not** a food-delivery app. It's internal infrastructure — built for the people running the restaurant, not the people ordering from it.
+
+<br/>
 
 ---
 
-## 🌟 Product Vision & Scope Philosophy
+## 📖 Table of Contents
 
-Unlike consumer food delivery apps or monolithic enterprise ERPs, **RestaurantOS** optimizes strictly for **Demo-First Operational Excellence** within a single restaurant operational environment. By uniting customers, waiters, kitchen chefs, cashiers, and restaurant executives onto a synchronized sub-100ms feedback loop, RestaurantOS transforms reactive restaurant management into intelligent, predictive execution.
+- [The Problem](#-the-problem)
+- [The Solution](#-the-solution)
+- [Key Features](#-key-features)
+- [Application Modules](#-application-modules)
+- [System Architecture](#-system-architecture)
+- [AI Architecture — Restaurant Brain](#-ai-architecture--restaurant-brain)
+- [Technology Stack](#-technology-stack)
+- [Folder Structure](#-folder-structure)
+- [Setup Instructions](#-setup-instructions)
+- [Environment Variables](#-environment-variables)
+- [Screenshots & Demo](#-screenshots--demo)
+- [Architecture Decisions](#-architecture-decisions)
+- [Future Roadmap](#-future-roadmap)
+- [Known Limitations](#-known-limitations)
+- [Demo Credentials](#-demo-credentials)
+- [Deployment](#-deployment)
+- [Developer Information](#-developer-information)
+- [License](#-license)
+
+<br/>
 
 ---
 
-## 🏛️ Immutable Architecture & Technical Specifications
+## 🎯 The Problem
 
-This project strictly binds feature implementation to our authoritative set of immutable architectural engineering contracts documented inside the [`docs/`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs) directory:
+Running a restaurant means running five different systems that don't know about each other.
 
-- [`PROJECT.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/PROJECT.md) — Product vision, problem statement, single-restaurant scope, goals, role personas, and Sprint 1-8 roadmap.
-- [`ARCHITECTURE.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/ARCHITECTURE.md) — Next.js 15 App Router hybrid rendering, React Server Actions, and Supabase Realtime WebSocket topology.
-- [`DATABASE.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DATABASE.md) — Strict 3NF relational schema covering the 12 essential operational tables, realistic `seed.ts` demo strategy, integer cent monetary representation, and RLS policies.
-- [`API.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/API.md) — RPC over REST architecture, Server Action domain boundaries, programmatic demo reset hooks, and Zod error envelopes.
-- [`WORKFLOWS.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/WORKFLOWS.md) — Complete 10-step demo journey and deterministic Finite State Machines (FSMs) for tables and order tickets.
-- [`UI_GUIDELINES.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/UI_GUIDELINES.md) — Codified inviolable **UI Rule** reserving visual identity to user direction, target hardware viewports, and Framer Motion interaction standards.
-- [`DEVELOPMENT.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DEVELOPMENT.md) — Mandatory skeleton loading/empty/error states, SOLID & DRY engineering governance, strict TypeScript rules, and sprint delivery protocols.
-- [`AI.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/AI.md) — High-impact operational AI focused exclusively on predictive inventory depletion and manager demand analytics, fortified by deterministic local statistical fallbacks.
-- [`DEMO.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/DEMO.md) — Deterministic 5-minute live hackathon presentation timeline and `npm run demo:reset` restoration mechanics.
-- [`PRESENTATION.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/PRESENTATION.md) — Concise, professional 5-minute spoken presenter script, stage choreography, and judging defense cheat sheet.
-- [`PRODUCT_DECISIONS.md`](file:///c:/Users/admin/Desktop/trash/restaurant-os/docs/PRODUCT_DECISIONS.md) — Comprehensive Architectural Decision Records (ADRs 001–008), lean tradeoff justifications, and future escalation strategies.
+| Pain Point | What It Looks Like Day-to-Day |
+|---|---|
+| 📝 **Manual order management** | Orders scribbled on paper or shouted across the kitchen |
+| 🐢 **Slow waiter ↔ kitchen communication** | Tickets get lost, orders get delayed, tables get frustrated |
+| 🧩 **Disconnected software** | A POS for billing, a spreadsheet for inventory, a notebook for reservations |
+| 🕳️ **Poor operational visibility** | Managers find out about problems after the shift is over |
+| 📉 **No real analytics** | Decisions made on gut feeling instead of data |
+| 🤖 **No AI assistance** | Nothing surfaces insight — someone has to go looking for it |
+| 👥 **Difficult staff coordination** | No shared view of who's doing what, or what's urgent |
+| 🪑 **Inefficient table management** | No live view of what's available, seated, or needs cleaning |
+| 💳 **Delayed billing** | Manual tallying at the register slows down table turnover |
+| 🧠 **No actionable insight** | Data exists, but nobody has time to turn it into a decision |
+
+Most tools solve *one* of these. RestaurantOS solves the whole workflow at once.
+
+<br/>
 
 ---
 
-## 🏗️ Sprint-Based Milestone Roadmap
+## 💡 The Solution
 
-To ensure peak stability, development proceeds systematically across 8 self-contained Sprints. Each sprint guarantees a clean, compilable, and demonstrable application checkpoint:
+RestaurantOS is a **single, unified platform** covering the full restaurant operating loop — from the moment a table is seated to the moment analytics reflect that shift's performance.
 
-```text
-Sprint 1: Project setup, Database, Authentication, and Role permissions (Current Next Step)
-Sprint 2: Live Menu queries, Table occupancy modeling, and Reservation queues
-Sprint 3: Realtime Customer Ordering and collaborative table session tokens
-Sprint 4: Kitchen Display System (KDS), preparation cooking timers, and stock toggles
-Sprint 5: Waiter Coordination Console and automated sub-100ms alert feeds
-Sprint 6: Cashier POS Checkout, cent-based taxation, and settlement clearing
-Sprint 7: Executive Manager Analytics, revenue velocity charts, and turnover KPIs
-Sprint 8: Operational AI Insights Engine with deterministic fallback algorithms
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**Core Operations**
+- 📊 Live Dashboard
+- 🧾 Point of Sale (POS)
+- 🪑 Table Management
+- 👨‍🍳 Kitchen Display System
+- 🍽️ Menu Management
+- 📦 Order Management
+
+</td>
+<td width="50%" valign="top">
+
+**Intelligence Layer**
+- 📈 Restaurant Analytics
+- 👥 Staff Management
+- 🤖 AI Restaurant Copilot
+- 🔔 Real-time Notifications
+- 🗓️ Reservations *(Beta)*
+- 📉 Inventory *(Beta)*
+
+</td>
+</tr>
+</table>
+
+Every module writes to the **same data layer**, in real time. That's what makes the AI copilot useful — it isn't answering from a script, it's reading the same live state your staff sees on screen.
+
+<br/>
+
+---
+
+## ✨ Key Features
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+### 🔴 Real-Time Everything
+Table status, kitchen tickets, and order state update live across every connected device — no refresh needed.
+
+</td>
+<td width="33%" valign="top">
+
+### 🧠 Grounded AI Copilot
+Ask about inventory, kitchen load, or today's revenue. The AI queries real restaurant data — it doesn't guess.
+
+</td>
+<td width="33%" valign="top">
+
+### 🔐 Role-Based Access
+Managers, waiters, kitchen staff, and cashiers each see a workspace built for their job, not a generic admin panel.
+
+</td>
+</tr>
+<tr>
+<td width="33%" valign="top">
+
+### 🪑 Live Floor Map
+See every table's status at a glance — available, seated, dirty, or ready to turn.
+
+</td>
+<td width="33%" valign="top">
+
+### 👨‍🍳 Kitchen Display System
+Digital ticket queue replaces paper slips and shouted orders across the pass.
+
+</td>
+<td width="33%" valign="top">
+
+### 📊 Operational Analytics
+Revenue, order volume, and performance trends in one dashboard — no spreadsheets required.
+
+</td>
+</tr>
+</table>
+
+<br/>
+
+---
+
+## 🧩 Application Modules
+
+| Module | Status | Description |
+|---|:---:|---|
+| **Authentication** | ✅ Live | Email login/registration, Google OAuth, secure sessions, guided onboarding |
+| **Dashboard** | ✅ Live | Live KPIs, revenue snapshot, table/order overview, quick actions, activity feed |
+| **Menu Management** | ✅ Live | Categories, items, availability toggles, pricing |
+| **Table Management** | ✅ Live | Live table status (available / occupied / dirty), QR-ready architecture |
+| **POS** | ✅ Live | Create orders, add items and quantities, send directly to kitchen |
+| **Kitchen Display** | ✅ Live | Live order queue across preparing → ready → served |
+| **Order Management** | ✅ Live | Full order history and status tracking |
+| **Analytics** | ✅ Live | Revenue and operational metrics, restaurant-level insights |
+| **AI Copilot** | ✅ Live | Tool-based restaurant assistant grounded in live data |
+| **Reservations** | 🧪 Beta | Booking queue — core flow works, edge cases still being hardened |
+| **Inventory** | 🧪 Beta | Stock tracking — functional, not yet feature-complete |
+| **Customers** | 🧪 Beta | Customer profiles — early implementation |
+
+<br/>
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+flowchart TD
+    subgraph Client["🖥️ Client (Staff Devices)"]
+        A[Dashboard]
+        B[POS]
+        C[Kitchen Display]
+        D[Analytics]
+        E[AI Copilot]
+    end
+
+    subgraph App["⚙️ Application Layer"]
+        F[Next.js App Router]
+        G[Server Actions]
+        H[Realtime Subscriptions]
+    end
+
+    subgraph Data["🗄️ Supabase"]
+        I[(PostgreSQL)]
+        J[Auth]
+        K[Row Level Security]
+        L[Realtime Engine]
+    end
+
+    subgraph AI["🤖 AI Layer"]
+        M[Restaurant Brain]
+        N[Gemini]
+    end
+
+    A & B & C & D & E --> F
+    F --> G
+    G --> I
+    F -.->|subscribe| H
+    H -.->|live updates| L
+    L -.-> I
+    J --> K --> I
+    E --> M --> N
+    M --> I
 ```
 
+**Read path:** client subscribes to live data via Supabase Realtime; writes flow through Server Actions, never direct client mutation.
+
+**Write path:** every mutation is validated, authorized via role/permission checks, and persisted through PostgreSQL with Row Level Security enforced at the database layer.
+
+<br/>
+
 ---
 
-## 🚀 Quickstart & One-Command Demo Reset
+## 🤖 AI Architecture — Restaurant Brain
 
-### Prerequisites
-- Node.js v20+ and npm / pnpm / bun.
-- Supabase account with configured PostgreSQL project credentials.
+The AI copilot is **not a generic chatbot bolted onto the UI**. It's a grounded, tool-based system that reasons over real operational data before responding.
 
-### Initial Configuration & Installation
-1. **Clone & Install Dependencies:**
-   ```bash
-   git clone <repository-url>
-   cd restaurant-os
-   npm install
-   ```
-2. **Configure Environment Credentials:**
-   ```bash
-   cp .env.example .env.local
-   ```
-   *Populate `.env.local` with corresponding Supabase database URLs and AI keys.*
+```mermaid
+flowchart LR
+    A[👤 Staff Question] --> B[🧠 Restaurant Brain]
+    B --> C{Intent Detection}
+    C --> D[🔀 Tool Router]
+    D --> E[🛠️ Restaurant Tools]
+    E --> F[(🗄️ Live Database)]
+    F --> E
+    E --> G[✨ Gemini]
+    G --> H[💬 Natural Language Response]
+```
 
-### One-Command Demo Environment Recovery
-To immediately re-initialize all 12 database tables with realistic, high-fidelity dine-in demo accounts, active menu catalogs, and inventory warning triggers in under 2 seconds, run:
+| Stage | Responsibility |
+|---|---|
+| **Intent Detection** | Determines what the staff member is actually asking — inventory, sales, kitchen load, table status |
+| **Tool Router** | Selects the correct read-only tool for that intent |
+| **Restaurant Tools** | Query live restaurant data directly from the database |
+| **Gemini** | Turns structured, grounded data into a clear natural-language answer |
+
+> **Why this matters:** the model never fabricates restaurant numbers. It retrieves the real figures first, then explains them — so "how much inventory is left on the tomatoes" gets a real answer, not a plausible-sounding guess.
+
+<br/>
+
+---
+
+## 🛠️ Technology Stack
+
+<table>
+<tr><th align="left">Layer</th><th align="left">Technology</th></tr>
+<tr><td><b>Frontend</b></td><td>Next.js · React · TypeScript · Tailwind CSS · shadcn/ui · Framer Motion</td></tr>
+<tr><td><b>Backend</b></td><td>Supabase · PostgreSQL · Server Actions</td></tr>
+<tr><td><b>Authentication</b></td><td>Supabase Auth · Email/Password · Google OAuth</td></tr>
+<tr><td><b>Database</b></td><td>PostgreSQL · Realtime Subscriptions · Row Level Security</td></tr>
+<tr><td><b>AI</b></td><td>Google Gemini · Restaurant Brain (Intent Detection → Tool Router → Structured Data → Response)</td></tr>
+<tr><td><b>Deployment</b></td><td>Vercel</td></tr>
+</table>
+
+<br/>
+
+---
+
+## 📁 Folder Structure
+
+<details>
+<summary><b>Click to expand full project structure</b></summary>
+
+```
+restaurant-os/
+├── app/                      # Next.js App Router
+│   ├── (public)/             # Landing, login, register
+│   ├── (staff)/               # Authenticated staff console
+│   │   ├── dashboard/
+│   │   ├── pos/
+│   │   ├── kitchen/
+│   │   ├── tables/
+│   │   ├── menu/
+│   │   ├── analytics/
+│   │   ├── ai/
+│   │   ├── reservations/      # Beta
+│   │   ├── inventory/         # Beta
+│   │   └── customers/         # Beta
+│   ├── api/                  # Route handlers (AI chat, auth callback)
+│   └── actions/               # Server Actions ("the backend")
+├── components/                # UI components by domain
+├── lib/
+│   ├── supabase/               # Client + server Supabase instances
+│   ├── ai/                     # Restaurant Brain orchestration
+│   └── utils/
+├── services/                  # Reusable data-fetching functions
+├── config/                    # Constants, permissions, feature flags
+├── types/                     # Shared TypeScript types
+├── validations/               # Zod schemas
+├── supabase/
+│   └── migrations/             # Sequential SQL migrations
+└── tests/                      # Business rule tests
+```
+
+</details>
+
+<br/>
+
+---
+
+## 🚀 Setup Instructions
+
+### 1. Clone the repository
+
 ```bash
-npm run demo:reset
+git clone https://github.com/<your-username>/restaurant-os.git
+cd restaurant-os
 ```
 
-### Launch Development Server
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+```bash
+cp .env.example .env.local
+```
+
+Fill in the values described in the [Environment Variables](#-environment-variables) section below.
+
+### 4. Set up Supabase
+
+1. Create a project at [supabase.com](https://supabase.com)
+2. Apply the migrations in `supabase/migrations/` (via the Supabase CLI or SQL editor)
+3. Copy your **Project URL** and **anon key** into `.env.local`
+
+### 5. Set up Gemini
+
+1. Generate an API key at [Google AI Studio](https://ai.google.dev)
+2. Add it to `.env.local` as `GEMINI_API_KEY`
+
+### 6. Run the development server
+
 ```bash
 npm run dev
 ```
-Open `http://localhost:3000` to inspect application status. Note: Per our strict UI Rule, feature page layouts remain unconstructed pending explicit visual design guidance.
+
+Visit **`http://localhost:3000`** 🎉
+
+<br/>
 
 ---
 
-## ⚖️ License
-Proprietary engineering blueprint developed for the Smart Restaurant Management System Hackathon. All rights reserved.
+## 🔑 Environment Variables
+
+| Variable | Description | Required |
+|---|---|:---:|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | ✅ |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous/public key | ✅ |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-only) | ✅ |
+| `GEMINI_API_KEY` | Google Gemini API key for the AI copilot | ✅ |
+| `NEXT_PUBLIC_SITE_URL` | Base URL of the deployed app | ✅ |
+| `GOOGLE_OAUTH_CLIENT_ID` | Google OAuth client ID | ⚙️ Optional |
+| `GOOGLE_OAUTH_CLIENT_SECRET` | Google OAuth client secret | ⚙️ Optional |
+
+> ⚠️ Never commit `.env.local`. The service role key bypasses Row Level Security — treat it as a secret with production-level sensitivity.
+
+<br/>
+
+---
+
+## 📸 Screenshots & Demo
+
+> 📷 **REQUIRED SCREENSHOT: Dashboard Overview** — full dashboard view showing live KPIs, revenue snapshot, and activity feed.
+
+> 📷 **REQUIRED SCREENSHOT: POS Screen** — an active order being built at a table, showing item selection and running total.
+
+> 📷 **REQUIRED SCREENSHOT: Kitchen Display** — the KDS view with tickets across preparing/ready columns.
+
+> 📷 **REQUIRED SCREENSHOT: AI Copilot** — a conversation showing a grounded answer (e.g. inventory or revenue query).
+
+> 📷 **REQUIRED SCREENSHOT: Menu Management** — the menu editor showing categories and items.
+
+> 📷 **REQUIRED SCREENSHOT: Analytics** — the analytics dashboard with revenue/operational charts.
+
+> 📷 **REQUIRED SCREENSHOT: Authentication** — the login screen.
+
+> 📷 **REQUIRED SCREENSHOT: Table Management** — the live floor map showing table statuses.
+
+> 📷 **REQUIRED SCREENSHOT: Dark Mode** — any core screen shown in dark theme.
+
+> 📷 **REQUIRED SCREENSHOT: Responsive Mobile** — the POS or dashboard on a mobile viewport.
+
+<br/>
+
+<div align="center">
+
+**🎬 Product Walkthrough GIF**
+
+`[Insert GIF here — recommended: 15–30s walkthrough of table → order → kitchen → billing flow]`
+
+**🎬 AI Copilot in Action GIF**
+
+`[Insert GIF here — recommended: a live query and grounded response]`
+
+</div>
+
+<br/>
+
+---
+
+## 🧭 Architecture Decisions
+
+- **Server Actions over a separate API layer** — mutations live next to the domain logic they belong to, with no extra HTTP boundary to maintain.
+- **Row Level Security at the database layer** — access control isn't just enforced in application code; it's enforced where the data lives.
+- **Realtime subscriptions over polling** — table and kitchen state need to feel instant, not "refresh in a few seconds."
+- **Tool-based AI over a raw chat completion** — the AI copilot reads real data through defined tools instead of freeform generation, which keeps its answers grounded and auditable.
+- **Beta-gating incomplete modules** — Reservations, Inventory, and Customers ship early but are explicitly labeled, rather than presented as finished.
+
+<br/>
+
+---
+
+## 🗺️ Future Roadmap
+
+- [ ] Promote Reservations, Inventory, and Customers out of Beta
+- [ ] QR-code table ordering for guests
+- [ ] Multi-location support for restaurant groups
+- [ ] Deeper analytics: cohort trends, menu-item performance
+- [ ] Expanded AI tool registry (staff scheduling insight, demand forecasting)
+- [ ] Automated CI pipeline (lint, test, build on PR)
+
+<br/>
+
+---
+
+## ⚠️ Known Limitations
+
+| Module | Status | Notes |
+|---|:---:|---|
+| **Reservations** | 🧪 Beta | Core booking flow works; edge cases around conflict handling still being refined |
+| **Inventory** | 🧪 Beta | Stock tracking is functional but not yet feature-complete |
+| **Customers** | 🧪 Beta | Early implementation of customer profiles |
+
+These modules are intentionally shipped as Beta rather than hidden — they work, but haven't been hardened to the same standard as the core modules.
+
+<br/>
+
+---
+
+## 🔐 Demo Credentials
+
+| Role | Email | Password |
+|---|---|---|
+| Manager | `[email protected]` | `[insert-password]` |
+| Waiter | `[email protected]` | `[insert-password]` |
+| Kitchen Staff | `[email protected]` | `[insert-password]` |
+| Cashier | `[email protected]` | `[insert-password]` |
+
+<br/>
+
+---
+
+## 🌐 Deployment
+
+| Resource | Link |
+|---|---|
+| **GitHub Repository** | `[insert repository URL]` |
+| **Live Demo** | `[insert deployed URL]` |
+
+Deployed on **Vercel** — connect the repository, add the environment variables above, and deploy.
+
+<br/>
+
+---
+
+## 👤 Developer Information
+
+**Hezron Belix**
+Team Lead
+
+Built for **VibeAthon 6.0** — *Smart Restaurant Management System*
+
+Satisfies all five phases of the problem statement:
+
+✔️ Modern UX &nbsp;·&nbsp; ✔️ Authentication &nbsp;·&nbsp; ✔️ Digital Operations &nbsp;·&nbsp; ✔️ Restaurant Management &nbsp;·&nbsp; ✔️ Intelligent Operations
+
+<br/>
+
+---
+
+## 📄 License
+
+Released under the **MIT License**.
+
+```
+MIT License
+
+Copyright (c) 2026 Hezron Belix
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+```
+
+<br/>
+
+<div align="center">
+
+**Built with ☕, real-time data, and a strong opinion that restaurants deserve one system, not ten.**
+
+</div>
