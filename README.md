@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="120" height="120" alt="RestaurantOS logo" src="https://github.com/user-attachments/assets/1e03f586-0b8c-494d-9bc9-4593bb5b8f7d" />
+<img width="110" height="110" alt="RestaurantOS logo" src="https://github.com/user-attachments/assets/1e03f586-0b8c-494d-9bc9-4593bb5b8f7d" />
 
 # RestaurantOS
 
@@ -567,6 +567,6 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 
 <div align="center">
 
-**Built with ☕, real-time data, and a strong opinion that restaurants deserve one system, not ten.**
+**Built with coffee☕, real-time data, and a strong opinion that restaurants deserve one system, not ten.**
 
 </div>
