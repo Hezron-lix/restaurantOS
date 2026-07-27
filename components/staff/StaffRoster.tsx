@@ -40,24 +40,30 @@ export function StaffRoster({ staff }: { staff: StaffMember[] }) {
   const router = useRouter();
 
   const handleAddStaff = () => {
-    if (!fullName || !email) {
-      toast.error("Please provide both name and email.");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!fullName.trim()) {
+      toast.error("Please provide a full name.");
+      return;
+    }
+
+    if (!email.trim() || !emailRegex.test(email.trim())) {
+      toast.error("Please enter a valid email address (e.g. alex@restaurant.com).");
       return;
     }
 
     const tempMember: StaffMember = {
       id: crypto.randomUUID(),
-      full_name: fullName,
-      email,
+      full_name: fullName.trim(),
+      email: email.trim(),
       role,
     };
 
-    addOptimisticStaff(tempMember);
-
     startTransition(async () => {
+      addOptimisticStaff(tempMember);
       try {
-        await addStaffMemberAction(fullName, email, role);
-        toast.success(`Added ${fullName} as ${role.toUpperCase()}`);
+        await addStaffMemberAction(fullName.trim(), email.trim(), role);
+        toast.success(`Added ${fullName.trim()} as ${role.toUpperCase()}`);
         setFullName("");
         setEmail("");
         setIsAdding(false);

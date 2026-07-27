@@ -2,7 +2,7 @@
 
 import { GlassCard } from "@/components/ui/glass-card";
 import { useRestaurant } from "@/components/providers/staff-providers";
-import { Store, MapPin, Phone, Clock, Globe } from "lucide-react";
+import { Store, MapPin, Phone, Clock } from "lucide-react";
 
 export function RestaurantOverview() {
   const { restaurant } = useRestaurant();
@@ -32,10 +32,7 @@ export function RestaurantOverview() {
           <span className="text-zinc-300">{restaurant.phone || "No phone provided"}</span>
         </div>
         
-        <div className="flex items-center gap-3">
-          <Globe className="w-4 h-4 text-zinc-500 flex-shrink-0" />
-          <span className="text-zinc-300">{restaurant.timezone}</span>
-        </div>
+
         
         <div className="flex items-center gap-3">
           <Clock className="w-4 h-4 text-zinc-500 flex-shrink-0" />

@@ -26,7 +26,9 @@ export default async function TablesPage() {
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight text-zinc-100">Table Management</h1>
-        <p className="text-zinc-400 mt-1 text-sm">Select a table to open an order or view status.</p>
+        <p className="text-zinc-400 mt-1 text-sm">
+          Select a table to open an order or view status. Use the pencil icon on a table to edit the number of seats.
+        </p>
       </div>
 
       {!tables || tables.length === 0 ? (

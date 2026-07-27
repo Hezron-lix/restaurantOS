@@ -106,17 +106,15 @@ export function TableGrid({ tables }: { tables: Table[] }) {
                 </div>
               )}
 
-              {/* Edit Capacity Button for Managers */}
-              {isManager && (
-                <button
-                  type="button"
-                  onClick={(e) => handleOpenEditModal(e, table)}
-                  title="Edit Table Capacity"
-                  className="absolute top-3 right-3 p-1.5 rounded-lg text-zinc-400 opacity-0 group-hover:opacity-100 hover:text-zinc-100 hover:bg-zinc-800/80 transition-all z-10"
-                >
-                  <Pencil className="w-3.5 h-3.5" />
-                </button>
-              )}
+              {/* Edit Capacity Button */}
+              <button
+                type="button"
+                onClick={(e) => handleOpenEditModal(e, table)}
+                title="Edit Table Capacity (Seats)"
+                className="absolute top-3 right-3 p-1.5 rounded-lg text-zinc-400 opacity-70 group-hover:opacity-100 hover:text-zinc-100 bg-zinc-900/60 hover:bg-zinc-800 border border-white/10 transition-all z-10"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+              </button>
               
               <div className="text-3xl font-bold text-zinc-100 mb-2">
                 {table.table_number}

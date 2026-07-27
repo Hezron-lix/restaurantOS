@@ -26,27 +26,27 @@ function getFrameUrl(index: number) {
 const STORY_STAGES = [
   {
     title: "RestaurantOS",
-    subtitle: "The operating system for modern restaurants.",
+    subtitle: "The engine for modern restaurant operations.",
     showCTA: false
   },
   {
-    title: "Every table connected.",
+    title: "Start every shift with clarity.",
     subtitle: "",
     showCTA: false
   },
   {
-    title: "Every order synchronized.",
-    subtitle: "",
+    title: "Total visibility, instantly.",
+    subtitle: "Live tables, active orders, kitchen flow,\nand revenue—all synchronized in real time.",
     showCTA: false
   },
   {
-    title: "Every decision informed.",
+    title: "Everything in one place.",
     subtitle: "",
     showCTA: false
   },
   {
     title: "RestaurantOS",
-    subtitle: "One intelligent platform.\nFrom reservation to revenue.",
+    subtitle: "One intelligent platform.\nFrom the front door to the back office.",
     showCTA: true
   }
 ];

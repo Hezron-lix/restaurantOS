@@ -16,7 +16,7 @@ export const locationSchema = z.object({
 
 export const operationsSchema = z.object({
   tables: z.number().int().min(1, "Must have at least 1 table").max(500, "Maximum 500 tables supported"),
-  reservations_enabled: z.boolean(),
+  cuisine_type: z.string().min(1, "Please select a cuisine type"),
 });
 
 // The final combined schema for submission

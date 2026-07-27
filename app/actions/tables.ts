@@ -22,8 +22,8 @@ export async function updateTableCapacityAction(tableId: string, capacity: numbe
     .eq("id", user.id)
     .single();
 
-  if (!profile || profile.role !== "manager") {
-    throw new Error("Only managers are authorized to edit table capacity.");
+  if (!profile || !profile.restaurant_id) {
+    throw new Error("Unauthorized staff profile.");
   }
 
   // Ensure table belongs to the user's restaurant

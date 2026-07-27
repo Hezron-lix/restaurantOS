@@ -22,10 +22,26 @@ const STEPS = [
   { id: "review", title: "Review", icon: CheckCircle2 },
 ];
 
+const CUISINE_TYPES = [
+  "Fine Dining",
+  "Casual Dining",
+  "Café",
+  "Bar & Grill",
+  "Fast Food",
+  "Bakery",
+  "Seafood",
+  "Pizzeria",
+  "Steakhouse",
+  "Vegetarian / Vegan",
+  "Asian Fusion",
+  "Indian",
+  "Other",
+];
+
 const STEP_FIELDS: (keyof RestaurantOnboardingInput)[][] = [
   ["name", "phone", "email"],
   ["address", "city", "country", "timezone", "currency"],
-  ["tables", "reservations_enabled"],
+  ["tables", "cuisine_type"],
   [],
 ];
 
@@ -48,7 +64,7 @@ export function OnboardingFlow() {
     mode: "onTouched",
     defaultValues: {
       tables: 10,
-      reservations_enabled: true,
+      cuisine_type: "Casual Dining",
       timezone: "Asia/Kolkata",
       currency: "INR",
     },
@@ -165,7 +181,7 @@ export function OnboardingFlow() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-zinc-300">Phone</label>
-                      <Input {...register("phone")} placeholder="+1 (555) 000-0000" className="bg-zinc-900/50" />
+                      <Input {...register("phone")} placeholder="+91 98765 43210" className="bg-zinc-900/50" />
                       {errors.phone && <p className="text-xs text-destructive">{errors.phone.message as string}</p>}
                     </div>
                     <div className="space-y-2">
@@ -231,15 +247,18 @@ export function OnboardingFlow() {
                     {errors.tables && <p className="text-xs text-destructive">{errors.tables.message as string}</p>}
                     <p className="text-xs text-zinc-500">This will pre-generate your table map.</p>
                   </div>
-                  <div className="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-zinc-900/30">
-                    <div>
-                      <p className="font-medium text-zinc-200 text-sm">Enable Reservations</p>
-                      <p className="text-xs text-zinc-400">Allow guests to book tables online.</p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" {...register("reservations_enabled")} className="sr-only peer" />
-                      <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
-                    </label>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-zinc-300">Cuisine Type</label>
+                    <select
+                      {...register("cuisine_type")}
+                      className="w-full h-10 rounded-md bg-zinc-900/50 border border-white/10 px-3 text-sm text-zinc-200 focus:outline-none focus:border-brand"
+                    >
+                      {CUISINE_TYPES.map((type) => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                    {errors.cuisine_type && <p className="text-xs text-destructive">{errors.cuisine_type.message as string}</p>}
+                    <p className="text-xs text-zinc-500">Helps personalise your dashboard and AI insights.</p>
                   </div>
                 </div>
               </motion.div>
@@ -261,6 +280,7 @@ export function OnboardingFlow() {
                     <div><span className="text-zinc-500 block mb-1">Name</span><span className="text-zinc-200 font-medium">{getValues("name")}</span></div>
                     <div><span className="text-zinc-500 block mb-1">Location</span><span className="text-zinc-200 font-medium">{getValues("city")}, {getValues("country")}</span></div>
                     <div><span className="text-zinc-500 block mb-1">Tables</span><span className="text-zinc-200 font-medium">{getValues("tables")}</span></div>
+                    <div><span className="text-zinc-500 block mb-1">Cuisine</span><span className="text-zinc-200 font-medium">{getValues("cuisine_type")}</span></div>
                     <div><span className="text-zinc-500 block mb-1">Currency</span><span className="text-zinc-200 font-medium">{getValues("currency")}</span></div>
                   </div>
                 </div>

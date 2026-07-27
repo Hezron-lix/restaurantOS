@@ -2,7 +2,7 @@
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-export async function seedRestaurantData(restaurantId: string) {
+export async function seedRestaurantData(restaurantId: string, tableCount: number = 6) {
   const supabase = await createServerSupabaseClient();
   
   // 1. Check if tables already exist
@@ -23,7 +23,7 @@ export async function seedRestaurantData(restaurantId: string) {
   }
 
   // 2. Insert Tables
-  const tablesToInsert = Array.from({ length: 6 }).map((_, i) => ({
+  const tablesToInsert = Array.from({ length: tableCount }).map((_, i) => ({
     restaurant_id: restaurantId,
     table_number: i + 1,
     capacity: (i % 2 === 0) ? 2 : 4,

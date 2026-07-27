@@ -166,7 +166,7 @@ export async function createRestaurantAction(data: RestaurantOnboardingInput): P
 
     // ── Step 5: Seed data ────────────────────────────────────────────────────
     dbLog("SEED — calling seedRestaurantData", { restaurantId: restaurant.id });
-    const seedResult = await seedRestaurantData(restaurant.id);
+    const seedResult = await seedRestaurantData(restaurant.id, validated.data.tables);
     dbLog("SEED — result", { seedResult });
 
     revalidatePath("/dashboard", "layout");
