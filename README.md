@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://via.placeholder.com/120x120.png?text=ROS" alt="RestaurantOS logo" width="120" />
+<img width="1254" height="1254" alt="RestaurantOS logo" src="https://github.com/user-attachments/assets/1e03f586-0b8c-494d-9bc9-4593bb5b8f7d" />
 
 # RestaurantOS
 
@@ -393,25 +393,36 @@ Visit **`http://localhost:3000`** 🎉
 
 ## 📸 Screenshots & Demo
 
-> 📷 **REQUIRED SCREENSHOT: Dashboard Overview** — full dashboard view showing live KPIs, revenue snapshot, and activity feed.
+> 📷 **Dashboard Overview**
 
-> 📷 **REQUIRED SCREENSHOT: POS Screen** — an active order being built at a table, showing item selection and running total.
+<img width="1917" height="968" alt="image" src="https://github.com/user-attachments/assets/fe1adef2-eb43-4cb0-bdf1-13f2feeef8ac" />
 
-> 📷 **REQUIRED SCREENSHOT: Kitchen Display** — the KDS view with tickets across preparing/ready columns.
+> 📷 **POS Screen** 
 
-> 📷 **REQUIRED SCREENSHOT: AI Copilot** — a conversation showing a grounded answer (e.g. inventory or revenue query).
+<img width="1917" height="963" alt="image" src="https://github.com/user-attachments/assets/64d9a1fa-c87b-4a55-ab3a-e0185a84e0fe" />
 
-> 📷 **REQUIRED SCREENSHOT: Menu Management** — the menu editor showing categories and items.
+> 📷 **Kitchen Display**
 
-> 📷 **REQUIRED SCREENSHOT: Analytics** — the analytics dashboard with revenue/operational charts.
+<img width="1917" height="971" alt="image" src="https://github.com/user-attachments/assets/32319056-1a5d-482d-94c1-b78d4d0ed004" />
+
+> 📷 **AI Copilot**
+
+<img width="1917" height="975" alt="image" src="https://github.com/user-attachments/assets/1e796198-e2ce-4709-acee-042a6647ccc1" />
+
+
+> 📷 **Menu Management** 
+
+<img width="1917" height="972" alt="image" src="https://github.com/user-attachments/assets/222671f3-74fa-4d34-981d-3fcd0132a5ee" />
+
+> 📷 **Analytics**
+
+<img width="1917" height="972" alt="image" src="https://github.com/user-attachments/assets/0863fb85-2811-4b6f-a909-4beb37b08ef6" />
 
 > 📷 **REQUIRED SCREENSHOT: Authentication** — the login screen.
 
-> 📷 **REQUIRED SCREENSHOT: Table Management** — the live floor map showing table statuses.
-
-> 📷 **REQUIRED SCREENSHOT: Dark Mode** — any core screen shown in dark theme.
-
-> 📷 **REQUIRED SCREENSHOT: Responsive Mobile** — the POS or dashboard on a mobile viewport.
+> 📷 **Table Management**
+> 
+<img width="1917" height="971" alt="image" src="https://github.com/user-attachments/assets/be7afdb5-39f6-40f6-a30e-9c11f04c0646" />
 
 <br/>
 
