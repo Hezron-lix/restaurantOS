@@ -49,8 +49,8 @@ export function OnboardingFlow() {
     defaultValues: {
       tables: 10,
       reservations_enabled: true,
-      timezone: "UTC",
-      currency: "USD",
+      timezone: "Asia/Kolkata",
+      currency: "INR",
     },
   });
 
@@ -205,12 +205,12 @@ export function OnboardingFlow() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-zinc-300">Timezone</label>
-                      <Input {...register("timezone")} placeholder="UTC" className="bg-zinc-900/50" />
+                      <Input {...register("timezone")} placeholder="Asia/Kolkata" className="bg-zinc-900/50" />
                       {errors.timezone && <p className="text-xs text-destructive">{errors.timezone.message as string}</p>}
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-zinc-300">Currency Code</label>
-                      <Input {...register("currency")} placeholder="USD" className="bg-zinc-900/50" maxLength={3} />
+                      <Input {...register("currency")} placeholder="INR" className="bg-zinc-900/50" maxLength={3} />
                       {errors.currency && <p className="text-xs text-destructive">{errors.currency.message as string}</p>}
                     </div>
                   </div>

@@ -38,15 +38,6 @@ export function ChatBox() {
     scrollToBottom();
   }, [messages, statusText, errorText]);
 
-  useEffect(() => {
-    const initialQuery = searchParams.get('q');
-    if (initialQuery && !hasSubmittedRef.current) {
-      hasSubmittedRef.current = true;
-      // Clear it from the URL so refresh doesn't resubmit
-      router.replace(pathname, { scroll: false });
-      submitPrompt(initialQuery);
-    }
-  }, [searchParams, router, pathname]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -156,6 +147,16 @@ export function ChatBox() {
     }
   };
 
+  useEffect(() => {
+    const initialQuery = searchParams.get('q');
+    if (initialQuery && !hasSubmittedRef.current) {
+      hasSubmittedRef.current = true;
+      // Clear it from the URL so refresh doesn't resubmit
+      router.replace(pathname, { scroll: false });
+      submitPrompt(initialQuery);
+    }
+  }, [searchParams, router, pathname]);
+
   return (
     <div className="flex flex-col h-full bg-background border rounded-xl overflow-hidden shadow-sm">
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
@@ -167,7 +168,7 @@ export function ChatBox() {
                 Welcome back to {restaurantName}.
               </p>
               <p className="text-sm text-brand/80 font-medium">
-                Powered by your restaurant's live operational data.
+                Powered by your restaurant&apos;s live operational data.
               </p>
             </div>
             

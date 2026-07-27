@@ -1,6 +1,7 @@
 import { getFloorTables } from '@/services/tables';
 import { getKitchenLoad } from '@/services/orders';
 import { getTodaySalesSummary } from '@/services/analytics';
+import { formatCurrency } from '@/lib/format';
 import type { ToolContext } from './registry';
 
 export async function getRestaurantHealth(context: ToolContext, args: Record<string, any>) {
@@ -10,10 +11,11 @@ export async function getRestaurantHealth(context: ToolContext, args: Record<str
       return { error: 'Unauthorized. Only managers can view a full health summary.' };
     }
 
-    const [tables, kitchen, sales] = await Promise.all([
+    const [tables, kitchen, sales, { data: restaurant }] = await Promise.all([
       getFloorTables(context.supabase), // tables service uses RLS internally, but we could pass restaurantId if needed. Wait, getFloorTables might need it.
       getKitchenLoad(context.supabase, context.restaurantId!),
-      getTodaySalesSummary(context.supabase, context.restaurantId!)
+      getTodaySalesSummary(context.supabase, context.restaurantId!),
+      context.supabase.from('restaurants').select('currency').eq('id', context.restaurantId!).single()
     ]);
 
     const totalTables = tables.length;
@@ -36,7 +38,8 @@ export async function getRestaurantHealth(context: ToolContext, args: Record<str
     if (sales.totalOrders === 0) {
       summary += `• **Today's Revenue:** 0 today.\n\n`;
     } else {
-      summary += `• **Today's Revenue:** ${sales.totalRevenue}.\n\n`;
+      const formattedRevenue = formatCurrency(sales.totalRevenue, { currency: restaurant?.currency });
+      summary += `• **Today's Revenue:** ${formattedRevenue}.\n\n`;
     }
     
     // Simple conditional for the ending
@@ -50,7 +53,16 @@ export async function getRestaurantHealth(context: ToolContext, args: Record<str
 
     return {
       success: true,
-      summary: summary
+      summary: summary,
+      data: {
+        diningRoom: { seatedCount, availableTables, totalTables },
+        kitchen: { activeTickets: kitchen.activeTickets },
+        sales: { 
+          totalOrdersToday: sales.totalOrders,
+          totalRevenueTodayCents: sales.totalRevenue,
+          totalRevenueTodayFormatted: sales.totalOrders === 0 ? "0" : formatCurrency(sales.totalRevenue, { currency: restaurant?.currency })
+        }
+      }
     };
   } catch (error: any) {
     return { error: error.message || 'Failed to fetch restaurant health summary.' };

@@ -30,7 +30,7 @@ export type Message = {
   tool_calls?: any[];
 };
 
-export function createChatStream(messages: Message[], context: ToolContext) {
+export function createChatStream(messages: Message[], context: ToolContext, recursionDepth = 0) {
   // Graceful API Key Error
   if (!process.env.OPENROUTER_API_KEY) {
     return new ReadableStream({
@@ -40,6 +40,18 @@ export function createChatStream(messages: Message[], context: ToolContext) {
       }
     });
   }
+
+  // Infinite Recursion Failsafe: Prevent catastrophic LLM hallucination loops
+  if (recursionDepth > 3) {
+    return new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ text: "\n\n(I apologize, but the operation became too complex and was automatically safely aborted.)" })}\n\n`));
+        controller.close();
+      }
+    });
+  }
+
+  const streamStartTime = performance.now();
 
   return new ReadableStream({
     async start(controller) {
@@ -51,16 +63,11 @@ export function createChatStream(messages: Message[], context: ToolContext) {
 
       let response: any;
       let lastError: any;
+      const openRouterReqStart = performance.now();
 
       for (let i = 0; i < MODELS.length; i++) {
         const model = MODELS[i];
         try {
-          if (i === 0) {
-            console.log(`Using model:\n${model}`);
-          } else {
-            console.log(`Primary model unavailable.\nFalling back to:\n${model}`);
-          }
-
           response = await openai.chat.completions.create({
             model: model,
             messages: messages as any[],
@@ -69,12 +76,11 @@ export function createChatStream(messages: Message[], context: ToolContext) {
             tool_choice: 'auto',
             stream: true,
           });
-
           break; // Success, exit loop
         } catch (error: any) {
           lastError = error;
           const status = error.status || error.response?.status;
-          
+          console.error(`[OpenRouter Request Error] Model ${model} failed with status:`, status);
           if (status === 400 || status === 401 || status === 403) {
             break; 
           }
@@ -83,16 +89,34 @@ export function createChatStream(messages: Message[], context: ToolContext) {
 
       if (!response) {
         console.error('All fallback models failed or fatal error:', lastError);
-        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ error: "LLM Provider is currently unavailable or returned an error. Please try again." })}\n\n`));
+        const status = lastError?.status || lastError?.response?.status;
+        const errMsg = lastError?.message || lastError?.error?.message || (typeof lastError === 'string' ? lastError : JSON.stringify(lastError || {}));
+        
+        const isRateLimit = status === 429 || 
+                            errMsg.includes('429') || 
+                            errMsg.includes('free-models-per-day') || 
+                            errMsg.toLowerCase().includes('rate limit') ||
+                            errMsg.toLowerCase().includes('rate_limit');
+
+        const userFriendlyError = isRateLimit 
+          ? "Restaurant Copilot is temporarily unavailable. Please try again later." 
+          : "LLM Provider is currently unavailable or returned an error. Please try again.";
+
+        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ error: userFriendlyError })}\n\n`));
         controller.close();
         return;
       }
 
       let toolCallBuffer: any = null;
       let assistantContentBuffer = '';
+      let firstTokenReceived = false;
 
       try {
         for await (const chunk of response) {
+          if (!firstTokenReceived) {
+            firstTokenReceived = true;
+          }
+
           const delta = chunk.choices[0]?.delta;
 
           if (delta?.tool_calls) {
@@ -144,7 +168,7 @@ export function createChatStream(messages: Message[], context: ToolContext) {
               } as Message
             ];
 
-            const nestedStream = createChatStream(nextMessages, context);
+            const nestedStream = createChatStream(nextMessages, context, recursionDepth + 1);
             const reader = nestedStream.getReader();
             
             while (true) {
@@ -155,9 +179,22 @@ export function createChatStream(messages: Message[], context: ToolContext) {
             break; // Stop processing chunks for this tool call event to prevent duplicate logic
           }
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('OpenAI Error:', err);
-        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ error: 'LLM Provider Error. Please try again.' })}\n\n`));
+        const status = err?.status || err?.response?.status;
+        const errMsg = err?.message || err?.error?.message || (typeof err === 'string' ? err : JSON.stringify(err || {}));
+        
+        const isRateLimit = status === 429 || 
+                            errMsg.includes('429') || 
+                            errMsg.includes('free-models-per-day') || 
+                            errMsg.toLowerCase().includes('rate limit') ||
+                            errMsg.toLowerCase().includes('rate_limit');
+
+        const userFriendlyError = isRateLimit 
+          ? "Restaurant Copilot is temporarily unavailable. Please try again later." 
+          : "LLM Provider Error. Please try again.";
+
+        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ error: userFriendlyError })}\n\n`));
       } finally {
         controller.close();
       }

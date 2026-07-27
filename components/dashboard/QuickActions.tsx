@@ -4,11 +4,21 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { PlusCircle, Grid2x2, ChefHat, Zap, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { enableDemoModeAction } from "@/app/actions/demo";
 import { toast } from "sonner";
 import { useRestaurant } from "@/components/providers/staff-providers";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const ACTIONS = [
   { label: "Start New Order", icon: PlusCircle, href: "/tables", color: "text-emerald-400", bg: "bg-emerald-400/10" },
@@ -21,11 +31,14 @@ export function QuickActions() {
   const { restaurant } = useRestaurant();
   const router = useRouter();
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const handleDemoMode = () => {
     if (!restaurant) return;
+    setIsDialogOpen(false); // Close dialog immediately
     startTransition(async () => {
       try {
-        await enableDemoModeAction(restaurant.id);
+        await enableDemoModeAction();
         toast.success("Demo Mode Activated! Reality warped.");
         router.refresh();
       } catch {
@@ -49,13 +62,35 @@ export function QuickActions() {
           </Link>
         ))}
         
-        {/* Demo Mode Button */}
-        <button onClick={handleDemoMode} disabled={isPending} className="flex items-center gap-3 p-3 rounded-lg border border-brand/30 bg-brand/5 hover:bg-brand/10 transition-all group active:scale-95 text-left">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 bg-brand/20 text-brand relative overflow-hidden">
-             {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
-          </div>
-          <span className="text-sm font-bold text-brand group-hover:text-brand">Activate Demo Mode</span>
-        </button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger 
+            disabled={isPending} 
+            className="flex items-center gap-3 p-3 rounded-lg border border-brand/30 bg-brand/5 hover:bg-brand/10 transition-all group active:scale-95 text-left"
+          >
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 bg-brand/20 text-brand relative overflow-hidden">
+              {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
+            </div>
+            <span className="text-sm font-bold text-brand group-hover:text-brand">
+              {isPending ? "Activating..." : "Activate Demo Mode"}
+            </span>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Reset Demo Data?</DialogTitle>
+              <DialogDescription>
+                This will remove the restaurant&apos;s current orders and activities and restore the demo dataset. This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mt-4 flex sm:justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isPending}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={handleDemoMode} disabled={isPending}>
+                {isPending ? "Resetting..." : "Reset Demo"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </GlassCard>
   );

@@ -102,8 +102,15 @@ export async function getDropdownInsights(restaurantId: string) {
     .gte('created_at', today.toISOString());
     
   const revenueTodayCents = (todayOrders || []).reduce((sum, o) => sum + (o.total_cents || 0), 0);
-  const revenueToday = revenueTodayCents / 100;
-  const salesInsight = `💰 Today's revenue is $${revenueToday.toFixed(2)}.`;
+  // Fetch restaurant to get currency setting
+  const { data: restaurant } = await supabase
+    .from('restaurants')
+    .select('currency')
+    .eq('id', restaurantId)
+    .single();
+
+  const formattedRevenue = (await import('@/lib/format')).formatCurrency(revenueTodayCents, { currency: restaurant?.currency });
+  const salesInsight = `💰 Today's revenue is ${formattedRevenue}.`;
 
   return {
     activities: activities.map(a => ({

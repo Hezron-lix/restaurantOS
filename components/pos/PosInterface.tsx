@@ -105,7 +105,7 @@ export function PosInterface({ tableId, tableNumber, orderId, categories, menuIt
   };
 
   const { restaurant } = useRestaurant();
-  const formatPrice = (cents: number) => formatCurrency(cents, restaurant?.currency || 'USD');
+  const formatPrice = (cents: number) => formatCurrency(cents, { currency: restaurant?.currency });
 
   return (
     <div className="flex flex-col h-[calc(100vh-100px)] -mx-6 md:-mx-8">

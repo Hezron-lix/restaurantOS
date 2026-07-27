@@ -20,7 +20,7 @@ const FRAME_START = 1;
 
 function getFrameUrl(index: number) {
   const paddedIndex = index.toString().padStart(3, "0");
-  return `/sequence/frames/ezgif-frame-${paddedIndex}.jpg`;
+  return `/sequence/frames/ezgif-frame-${paddedIndex}.webp`;
 }
 
 const STORY_STAGES = [
@@ -278,11 +278,11 @@ export function SequenceHero() {
           
           {/* Scroll Prompt */}
           <motion.div 
-            animate={{ opacity: scrollProgress > 0.05 ? 0 : 0.6 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center z-10 pointer-events-none"
+            animate={{ opacity: scrollProgress > 0.05 ? 0 : 0.9 }}
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center z-10 pointer-events-none"
           >
-            <div className="w-[1px] h-24 bg-gradient-to-b from-transparent via-white/10 to-white/40" />
-            <span className="text-[10px] tracking-[0.4em] text-zinc-500 uppercase mt-8">Scroll</span>
+            <div className="w-[1px] h-24 bg-gradient-to-b from-transparent via-white/25 to-white/70" />
+            <span className="text-[10px] tracking-[0.4em] text-zinc-300 uppercase mt-2.5 font-medium">Scroll</span>
           </motion.div>
         </>
       )}

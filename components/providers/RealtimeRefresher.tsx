@@ -24,8 +24,7 @@ export function RealtimeRefresher() {
           table: 'orders',
           filter: `restaurant_id=eq.${restaurant.id}`,
         },
-        (payload: unknown) => {
-          console.log('Realtime Order Event:', payload);
+        () => {
           router.refresh();
         }
       )
@@ -37,8 +36,7 @@ export function RealtimeRefresher() {
           table: 'tables',
           filter: `restaurant_id=eq.${restaurant.id}`,
         },
-        (payload: unknown) => {
-          console.log('Realtime Table Event:', payload);
+        () => {
           router.refresh();
         }
       )
@@ -50,13 +48,12 @@ export function RealtimeRefresher() {
           table: 'restaurant_activities',
           filter: `restaurant_id=eq.${restaurant.id}`,
         },
-        (payload: unknown) => {
-          console.log('Realtime Activity Event:', payload);
+        () => {
           router.refresh();
         }
       )
       .subscribe((status: string) => {
-        console.log('Realtime subscription status:', status);
+        // Silent subscription
       });
 
     return () => {

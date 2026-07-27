@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * CurrencyDisplay — Converts integer cents to formatted USD currency.
  *
@@ -30,7 +32,7 @@ export function CurrencyDisplay({ cents, className, currency, tabular = false }:
         className,
       )}
     >
-      {formatCurrency(cents, activeCurrency)}
+      {formatCurrency(cents, { currency: activeCurrency })}
     </span>
   );
 }

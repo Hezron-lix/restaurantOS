@@ -30,8 +30,8 @@ export async function getKitchenLoad(supabase: SupabaseClient<Database>, restaur
 /**
  * Retrieves the full order history for a restaurant, including items and table names.
  */
-export async function getOrdersHistory(supabase: SupabaseClient<Database>, restaurantId: string) {
-  const { data: orders, error } = await supabase
+export async function getOrdersHistory(supabase: SupabaseClient<Database>, restaurantId: string, options?: { limit?: number }) {
+  let query = supabase
     .from('orders')
     .select(`
       id,
@@ -48,6 +48,12 @@ export async function getOrdersHistory(supabase: SupabaseClient<Database>, resta
     `)
     .eq('restaurant_id', restaurantId)
     .order('created_at', { ascending: false });
+
+  if (options?.limit) {
+    query = query.limit(options.limit);
+  }
+
+  const { data: orders, error } = await query;
 
   if (error) {
     throw new Error(`Failed to fetch orders history: ${error.message}`);

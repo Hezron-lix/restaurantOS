@@ -9,35 +9,65 @@
 // Currency
 // ─────────────────────────────────────────────────────────────────────────────
 
+export interface FormatSettings {
+  currency?: string | null;
+  locale?: string | null;
+}
+
+const currencyLocaleMap: Record<string, string> = {
+  'USD': 'en-US',
+  'INR': 'en-IN',
+  'EUR': 'de-DE',
+  'GBP': 'en-GB',
+  'CAD': 'en-CA',
+  'AUD': 'en-AU',
+  'JPY': 'ja-JP',
+  'SGD': 'en-SG',
+};
+
 /**
- * Converts integer cents to a formatted currency string using ISO currency code.
- * @example formatCurrency(1450, 'USD') → "$14.50"
- * @example formatCurrency(1450, 'INR') → "₹14.50"
+ * Shared generic utility to format money across RestaurantOS.
+ * Relies on the standard Intl.NumberFormat and falls back gracefully.
+ * 
+ * @example formatCurrency(1450, { currency: 'USD' }) → "$14.50"
+ * @example formatCurrency(1450, { currency: 'INR' }) → "₹14.50"
  */
-export function formatCurrency(cents: number, currency: string = 'USD'): string {
+export function formatCurrency(cents: number, settings?: FormatSettings): string {
+  const currency = settings?.currency?.toUpperCase() || 'USD';
+  const locale = settings?.locale || currencyLocaleMap[currency] || 'en-US';
+
   try {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: currency || 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      currency: currency,
+      currencyDisplay: 'symbol'
     }).format(cents / 100);
-  } catch {
-    return `${currency || '$'}${(cents / 100).toFixed(2)}`;
+  } catch (error) {
+    // Fallback if Intl.NumberFormat throws (e.g. invalid currency code)
+    return `${currency} ${(cents / 100).toFixed(2)}`;
   }
 }
 
 /**
- * Formats cents as a compact number for KPI banners (no symbol).
+ * Compact formatting for large numbers in analytics/charts.
+ * 
  * @example formatCurrencyCompact(125000) → "$1.25K"
  */
-export function formatCurrencyCompact(cents: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    notation: 'compact',
-    maximumFractionDigits: 1,
-  }).format(cents / 100);
+export function formatCurrencyCompact(cents: number, settings?: FormatSettings): string {
+  const currency = settings?.currency?.toUpperCase() || 'USD';
+  const locale = settings?.locale || currencyLocaleMap[currency] || 'en-US';
+
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currency,
+      currencyDisplay: 'symbol',
+      notation: 'compact',
+      compactDisplay: 'short'
+    }).format(cents / 100);
+  } catch (error) {
+    return `${currency} ${(cents / 100).toFixed(2)}`;
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

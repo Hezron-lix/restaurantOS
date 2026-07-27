@@ -10,6 +10,7 @@ import {
   SheetTitle,
   SheetDescription 
 } from "@/components/ui/sheet";
+import { CurrencyDisplay } from "@/components/shared/CurrencyDisplay";
 
 type OrderItem = {
   id: string;
@@ -34,13 +35,6 @@ interface OrderHistoryTableProps {
 export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
   const [filter, setFilter] = useState<"ALL" | "ACTIVE" | "COMPLETED">("ALL");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-
-  const formatPrice = (cents: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(cents / 100);
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -172,7 +166,7 @@ export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
                         {itemCount} item{itemCount !== 1 && 's'}
                       </td>
                       <td className="px-6 py-4 font-medium">
-                        {formatPrice(order.total_cents)}
+                        <CurrencyDisplay cents={order.total_cents} />
                       </td>
                       <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
                         {formatTime(order.created_at)}
@@ -228,7 +222,7 @@ export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
                         </span>
                       </div>
                       <span className="text-muted-foreground font-medium">
-                        {formatPrice(item.item_price_cents * item.quantity)}
+                        <CurrencyDisplay cents={item.item_price_cents * item.quantity} />
                       </span>
                     </div>
                   ))}
@@ -239,7 +233,7 @@ export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
                 <div className="flex justify-between items-center mb-6">
                   <span className="text-muted-foreground">Total</span>
                   <span className="text-2xl font-bold text-foreground">
-                    {formatPrice(selectedOrder.total_cents)}
+                    <CurrencyDisplay cents={selectedOrder.total_cents} />
                   </span>
                 </div>
               </div>

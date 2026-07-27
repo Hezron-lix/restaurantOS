@@ -6,6 +6,8 @@ import { useRestaurant } from "@/components/providers/staff-providers";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { KitchenStatus } from "@/components/dashboard/KitchenStatus";
 
+import { formatCurrency } from "@/lib/format";
+
 interface SummaryRowProps {
   activeOrdersCount: number;
   occupiedTablesCount: number;
@@ -15,7 +17,6 @@ interface SummaryRowProps {
 
 export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTablesCount, revenueToday }: SummaryRowProps) {
   const { restaurant } = useRestaurant();
-  const currencySymbol = restaurant?.currency === "USD" ? "$" : (restaurant?.currency || "$");
 
   const stats = [
     {
@@ -41,9 +42,18 @@ export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTables
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, i) => {
         const Icon = stat.icon;
+        
+        // Define how the number should animate/format
+        const formatFn = (val: number) => {
+          const formatted = stat.isCurrency 
+            ? formatCurrency(val, { currency: restaurant?.currency || 'USD' })
+            : Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(val);
+          return `${formatted}${stat.suffix || ""}`;
+        };
+
         return (
           <GlassCard key={i} className="p-5 flex flex-col justify-between h-32 hover:bg-white/5 transition-colors">
             <div className="flex items-center justify-between">
@@ -58,8 +68,7 @@ export function SummaryRow({ activeOrdersCount, occupiedTablesCount, totalTables
               <p className="text-2xl font-bold text-zinc-100 flex items-center">
                 <NumberTicker 
                   value={stat.value as number} 
-                  prefix={stat.isCurrency ? currencySymbol : ""} 
-                  suffix={stat.suffix || ""}
+                  formatFn={formatFn}
                 />
               </p>
               <p className="text-xs text-zinc-500 mt-1">{stat.trend}</p>

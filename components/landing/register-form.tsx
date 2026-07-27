@@ -114,7 +114,7 @@ export function RegisterForm() {
           <div>
             <h2 className="text-2xl font-semibold tracking-tight text-zinc-100 mb-2">Check your email</h2>
             <p className="text-zinc-400 text-sm">
-              We've sent a verification link to your email address. After verifying, you can sign in to RestaurantOS.
+              We&apos;ve sent a verification link to your email address. After verifying, you can sign in to RestaurantOS.
             </p>
           </div>
           <Button 

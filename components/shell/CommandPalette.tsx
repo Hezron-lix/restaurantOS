@@ -123,6 +123,11 @@ export function CommandPalette() {
     setSelectedIndex(0);
   }, [results.length]);
 
+  const handleSelect = (item: SearchItem) => {
+    setCommandPaletteOpen(false);
+    router.push(item.href);
+  };
+
   // Handle Keyboard Navigation
   useEffect(() => {
     if (!isCommandPaletteOpen) return;
@@ -153,11 +158,6 @@ export function CommandPalette() {
       }
     }
   }, [selectedIndex]);
-
-  const handleSelect = (item: SearchItem) => {
-    setCommandPaletteOpen(false);
-    router.push(item.href);
-  };
 
   if (!isCommandPaletteOpen) return null;
 

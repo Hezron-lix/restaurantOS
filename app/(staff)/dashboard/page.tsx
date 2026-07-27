@@ -88,7 +88,7 @@ export default async function DashboardPage() {
     .gte('created_at', today.toISOString());
     
   const revenueTodayCents = (todayOrders || []).reduce((sum, o) => sum + (o.total_cents || 0), 0);
-  const revenueToday = revenueTodayCents / 100;
+  const revenueToday = revenueTodayCents;
 
   // Fetch recent activities
   const { data: activitiesData } = await admin

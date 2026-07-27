@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useOptimistic } from "react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,12 +33,11 @@ export function StaffRoster({ staff }: { staff: StaffMember[] }) {
   const [role, setRole] = useState<"manager" | "waiter" | "kitchen" | "cashier">("waiter");
   const [isPending, startTransition] = useTransition();
   const [activeFilter, setActiveFilter] = useState<string>("ALL");
-  const [staffList, setStaffList] = useState<StaffMember[]>(staff);
+  const [optimisticStaff, addOptimisticStaff] = useOptimistic(
+    staff,
+    (state, newStaff: StaffMember) => [...state, newStaff]
+  );
   const router = useRouter();
-
-  useEffect(() => {
-    setStaffList(staff);
-  }, [staff]);
 
   const handleAddStaff = () => {
     if (!fullName || !email) {
@@ -53,7 +52,7 @@ export function StaffRoster({ staff }: { staff: StaffMember[] }) {
       role,
     };
 
-    setStaffList(prev => [...prev, tempMember]);
+    addOptimisticStaff(tempMember);
 
     startTransition(async () => {
       try {
@@ -65,14 +64,11 @@ export function StaffRoster({ staff }: { staff: StaffMember[] }) {
         router.refresh();
       } catch (err: any) {
         toast.error(err?.message || "Failed to add staff member.");
-        setStaffList(staff);
       }
     });
   };
 
-  const filteredStaff = activeFilter === "ALL" 
-    ? staffList 
-    : staffList.filter(s => s.role.toUpperCase() === activeFilter);
+  const filteredStaff = optimisticStaff.filter(s => activeFilter === "ALL" || s.role === activeFilter.toLowerCase());
 
   return (
     <div className="space-y-6">

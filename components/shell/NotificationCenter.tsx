@@ -36,7 +36,7 @@ export function NotificationCenter() {
 
   useEffect(() => {
     if (isOpen && restaurant?.id) {
-      setIsLoading(true);
+      setTimeout(() => setIsLoading(true), 0);
       getDropdownInsights(restaurant.id).then(data => {
         setActivities(data.activities);
         setInsights(data.insights);

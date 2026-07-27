@@ -8,15 +8,13 @@ export function NumberTicker({
   direction = "up",
   delay = 0,
   className,
-  prefix = "",
-  suffix = "",
+  formatFn,
 }: {
   value: number;
   direction?: "up" | "down";
   className?: string;
   delay?: number; // delay in s
-  prefix?: string;
-  suffix?: string;
+  formatFn?: (value: number) => string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const motionValue = useMotionValue(direction === "down" ? value : 0);
@@ -37,24 +35,16 @@ export function NumberTicker({
   useEffect(() => {
     return springValue.on("change", (latest) => {
       if (ref.current) {
-        // format logic for currency or standard
-        let formattedStr = "";
-        
-        if (prefix === "$" || prefix === "€" || prefix === "£") {
-           formattedStr = Intl.NumberFormat("en-US", {
-             minimumFractionDigits: 2,
-             maximumFractionDigits: 2
-           }).format(latest);
+        if (formatFn) {
+          ref.current.textContent = formatFn(latest);
         } else {
-           formattedStr = Intl.NumberFormat("en-US", {
-             maximumFractionDigits: 0
-           }).format(latest);
+          ref.current.textContent = Intl.NumberFormat("en-US", {
+            maximumFractionDigits: 0
+          }).format(latest);
         }
-        
-        ref.current.textContent = `${prefix}${formattedStr}${suffix}`;
       }
     });
-  }, [springValue, prefix, suffix]);
+  }, [springValue, formatFn]);
 
   return (
     <span
