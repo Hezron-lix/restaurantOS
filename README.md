@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="1254" height="1254" alt="RestaurantOS logo" src="https://github.com/user-attachments/assets/1e03f586-0b8c-494d-9bc9-4593bb5b8f7d" />
+<img width="120" height="120" alt="RestaurantOS logo" src="https://github.com/user-attachments/assets/1e03f586-0b8c-494d-9bc9-4593bb5b8f7d" />
 
 # RestaurantOS
 
