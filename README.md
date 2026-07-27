@@ -6,7 +6,7 @@
 
 ### The AI-Powered Operating System for Modern Restaurants
 
-*One platform. FOr every operation. Zero fuss.*
+*One platform. For every operation. Zero fuss.*
 
 <br/>
 
