@@ -59,7 +59,7 @@ export async function loginWithEmail(data: LoginInput): Promise<ActionResponse<n
   }
 }
 
-export async function registerWithEmail(data: RegisterInput): Promise<ActionResponse<null>> {
+export async function registerWithEmail(data: RegisterInput): Promise<ActionResponse<{ requiresEmailVerification: boolean }>> {
   try {
     const validated = registerSchema.safeParse(data);
     
@@ -77,11 +77,14 @@ export async function registerWithEmail(data: RegisterInput): Promise<ActionResp
 
     const supabase = await createServerSupabaseClient();
     
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
     // 1. Create the auth user
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email: validated.data.email,
       password: validated.data.password,
       options: {
+        emailRedirectTo: `${appUrl}/api/auth/callback`,
         data: {
           full_name: validated.data.fullName,
         },
@@ -125,25 +128,32 @@ export async function registerWithEmail(data: RegisterInput): Promise<ActionResp
       }
     }
 
-    // 3. Immediately sign the user in so a valid session cookie is established.
+    // 3. Check if email verification is required
+    //    If session is null, Supabase requires the user to verify their email first.
+    if (!signUpData?.session) {
+      return {
+        success: true,
+        data: { requiresEmailVerification: true },
+        message: 'Registration successful. Please verify your email.',
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    // 4. Immediately sign the user in so a valid session cookie is established.
     //    Without this step, signUp() alone does not guarantee a session cookie
-    //    when "Confirm email" is enabled on the Supabase project. The subsequent
-    //    /onboarding Server Action would then run with auth.uid() = NULL,
-    //    causing the restaurants INSERT policy to reject with 42501.
+    //    even if email confirmation is disabled.
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email: validated.data.email,
       password: validated.data.password,
     });
 
     if (signInError) {
-      // Sign-in failure after signUp means email confirmation is required.
-      // Registration itself succeeded — the user must confirm then log in.
       console.warn('[registerWithEmail] post-signup sign-in failed:', signInError.message);
     }
 
     return {
       success: true,
-      data: null,
+      data: { requiresEmailVerification: false },
       message: 'Account created successfully.',
       timestamp: new Date().toISOString()
     };
@@ -178,7 +188,7 @@ export async function resetPasswordAction(email: string): Promise<ActionResponse
   const supabase = await createServerSupabaseClient();
   
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/update-password`,
+    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/update-password`,
   });
 
   if (error) {

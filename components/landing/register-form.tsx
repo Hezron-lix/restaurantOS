@@ -12,7 +12,7 @@ import { registerWithEmail } from "@/app/actions/auth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 // Translates Supabase error messages into human-friendly copy
@@ -37,6 +37,7 @@ export function RegisterForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [requiresVerification, setRequiresVerification] = useState(false);
 
   const {
     register,
@@ -57,6 +58,11 @@ export function RegisterForm() {
           description: getFriendlyAuthError(response.error.message),
           duration: 8000,
         });
+        return;
+      }
+
+      if (response.data?.requiresEmailVerification) {
+        setRequiresVerification(true);
         return;
       }
 
@@ -93,6 +99,35 @@ export function RegisterForm() {
       });
     }
   };
+
+  if (requiresVerification) {
+    return (
+      <GlassCard className="w-full max-w-md p-8 relative overflow-hidden text-center">
+        {/* Ambient glow */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-brand to-transparent opacity-50" />
+        <div className="absolute -top-24 -inset-x-24 h-48 bg-brand/10 blur-[100px] pointer-events-none" />
+        
+        <div className="relative z-10 space-y-6">
+          <div className="mx-auto w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
+            <Mail className="w-6 h-6 text-brand" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight text-zinc-100 mb-2">Check your email</h2>
+            <p className="text-zinc-400 text-sm">
+              We've sent a verification link to your email address. After verifying, you can sign in to RestaurantOS.
+            </p>
+          </div>
+          <Button 
+            className="w-full" 
+            variant="outline" 
+            onClick={() => router.push("/login")}
+          >
+            Back to Login
+          </Button>
+        </div>
+      </GlassCard>
+    );
+  }
 
   return (
     <GlassCard className="w-full max-w-md p-8 relative overflow-hidden">
