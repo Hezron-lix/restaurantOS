@@ -165,7 +165,7 @@ export async function updateTableOccupancyStatus(
       .from('orders')
       .update({ status: 'BILLED' })
       .eq('table_id', tableId)
-      .eq('status', 'SERVED');
+      .in('status', ['PREPARING', 'READY', 'SERVED']);
   }
 
   return data as TableRecord;

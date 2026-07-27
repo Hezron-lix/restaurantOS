@@ -176,7 +176,7 @@ export async function updateOrderStatusAction(orderId: string, newStatus: string
 export async function clearTableAction(tableId: string) {
   const supabase = await createServerSupabaseClient();
   await supabase.from("tables").update({ status: "AVAILABLE" }).eq("id", tableId);
-  await supabase.from("orders").update({ status: "BILLED" }).eq("table_id", tableId).eq("status", "SERVED");
+  await supabase.from("orders").update({ status: "BILLED" }).eq("table_id", tableId).in("status", ["PREPARING", "READY", "SERVED"]);
   revalidatePath("/tables");
   revalidatePath("/dashboard");
   revalidatePath("/orders");
