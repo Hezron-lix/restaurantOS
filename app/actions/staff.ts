@@ -29,6 +29,10 @@ export async function addStaffMemberAction(fullName: string, email: string, role
 
   if (!profile?.restaurant_id) throw new Error("No restaurant context");
 
+  if (profile.role !== "manager") {
+    throw new Error("Unauthorized: only managers can add staff members.");
+  }
+
   const admin = createAdminSupabaseClient();
 
   // 1. Attempt to create user in Supabase Auth using Admin Client
