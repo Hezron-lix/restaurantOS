@@ -519,12 +519,15 @@ npm run demo:reset
 
 ## 🔐 Demo Credentials
 
+> Recommended login for judges. This account has full access to RestaurantOS and Restaurant Copilot.
+
 | Role | Email | Password |
 |---|---|---|
 | Manager | `qa_newuser_test@example.com` | `password123` |
 | Waiter | `alex@rest.com` | `password123` |
 | Kitchen Staff | `john@rest.com` | `password123` |
 | Cashier | `andrea@rest.com` | `password123` |
+
 
 <br/>
 
