@@ -524,9 +524,9 @@ npm run demo:reset
 | Role | Email | Password |
 |---|---|---|
 | Manager | `qa_newuser_test@example.com` | `password123` |
-| Waiter | `alex@rest.com` | `password123` |
-| Kitchen Staff | `john@rest.com` | `password123` |
-| Cashier | `andrea@rest.com` | `password123` |
+| Waiter | `alex@rest.com` | `Password123!` |
+| Kitchen Staff | `john@rest.com` | `Password123!` |
+| Cashier | `andrea@rest.com` | `Password123!` |
 
 
 <br/>
