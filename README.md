@@ -183,9 +183,9 @@ Revenue, order volume, and performance trends in one dashboard — no spreadshee
 | **Order Management** | ✅ Live | Full order history and status tracking |
 | **Analytics** | ✅ Live | Revenue and operational metrics, restaurant-level insights |
 | **AI Copilot** | ✅ Live | Tool-based restaurant assistant grounded in live data |
-| **Reservations** | 🧪 Beta | Booking queue — core flow works, edge cases still being hardened |
-| **Inventory** | 🧪 Beta | Stock tracking — functional, not yet feature-complete |
-| **Customers** | 🧪 Beta | Customer profiles — early implementation |
+| **Reservations** | 🧪 Beta | Placeholder module — UI scaffold in place, full booking workflow not yet implemented |
+| **Inventory** | 🧪 Beta | Placeholder module — UI scaffold in place, stock tracking not yet implemented |
+| **Customers** | 🧪 Beta | Placeholder module — UI scaffold in place, customer profiles not yet implemented |
 
 <br/>
 
@@ -528,6 +528,8 @@ npm run demo:reset
 | Kitchen Staff | `john@rest.com` | `Password123!` |
 | Cashier | `andrea@rest.com` | `Password123!` |
 
+> ⚠️ Note: the Manager account uses a different password format (`password123`) than the Waiter/Kitchen/Cashier accounts (`Password123!`) — this is expected, since the Manager account was self-registered through normal onboarding, while staff accounts are created by the manager with a fixed system password. See **Staff Onboarding** in Known Limitations.
+
 
 <br/>
 
@@ -537,8 +539,8 @@ npm run demo:reset
 
 | Resource | Link |
 |---|---|
-| **GitHub Repository** | `https://github.com/Hezron-lix/restaurantOS.git` |
-| **Live Demo** | `[[insert deployed URL]](https://restaurant-os-lix.vercel.app/)` |
+| **GitHub Repository** | [github.com/Hezron-lix/restaurantOS](https://github.com/Hezron-lix/restaurantOS.git) |
+| **Live Demo** | [restaurant-os-lix.vercel.app](https://restaurant-os-lix.vercel.app/) |
 
 Deployed on **Vercel** — connect the repository, add the environment variables above, and deploy.
 
