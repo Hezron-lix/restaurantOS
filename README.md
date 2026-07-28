@@ -503,15 +503,15 @@ npm run demo:reset
 
 ---
 
-## ⚠️ Known Limitations
+## ⚠️ Beta Features & Current Limitations
 
-| Module                |  Status | Notes                                                                                                                                                                                                                                                                     |
-| --------------------- | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Reservations**      | 🧪 Beta | Core booking flow works; edge cases around conflict handling are still being refined                                                                                                                                                                                      |
-| **Inventory**         | 🧪 Beta | Stock tracking is functional but not yet feature-complete                                                                                                                                                                                                                 |
-| **Customers**         | 🧪 Beta | Early implementation of customer profiles                                                                                                                                                                                                                                 |
-| **Role-based Access** | 🧪 Beta | Role assignment is fully server-controlled and cannot be self-elevated. Server-side route enforcement is still being completed, so a small number of manager-only pages remain directly accessible to authenticated staff, although sensitive write actions are protected |
-
+| Feature | Status | Notes |
+|---------|:------:|------|
+| Reservations | 🧪 Beta | Placeholder module. UI is available, but full reservation workflow and backend integration are planned for a future release. |
+| Inventory | 🧪 Beta | Placeholder module. Inventory tracking, stock management, and supplier workflows are planned but not yet implemented. |
+| Customers | 🧪 Beta | Placeholder module. Customer profiles, loyalty, and CRM capabilities are planned for a future update. |
+| Role-based Access | 🧪 Beta | Role assignment is fully server-controlled and cannot be self-elevated. Server-side route enforcement is still being completed, so a small number of manager-only pages remain directly accessible to authenticated staff, although sensitive write actions are protected. |
+| Staff Onboarding | 🧪 Beta | New staff accounts are created by managers with a fixed initial password and no email notification. Suitable for demo purposes, but a secure invitation and credential setup flow is planned before production release. |
 
 <br/>
 
