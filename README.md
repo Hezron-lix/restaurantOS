@@ -373,6 +373,24 @@ Visit **`http://localhost:3000`** 🎉
 
 ---
 
+## 🎬 Demo Mode
+
+RestaurantOS ships with a one-click **Demo Mode** so you can explore the platform without manually creating tables, orders, or menu items.
+
+From the **Dashboard**, open **Quick Actions → Activate Demo Mode**. This seeds your restaurant with realistic sample data — active tables, in-progress orders, a populated menu, and recent revenue history — so every module (Kitchen Display, Analytics, Restaurant Copilot) has something real to show immediately.
+
+Prefer the command line? The same seed data can be applied directly:
+
+```bash
+npm run demo:reset
+```
+
+> 💡 Demo Mode is the fastest way to evaluate Restaurant Copilot — ask it *"What's today's revenue?"* or *"Which tables are occupied?"* right after activating it.
+
+<br/>
+
+---
+
 ## 🔑 Environment Variables
 
 | Variable | Description | Required |
@@ -487,13 +505,13 @@ Visit **`http://localhost:3000`** 🎉
 
 ## ⚠️ Known Limitations
 
-| Module | Status | Notes |
-|---|:---:|---|
-| **Reservations** | 🧪 Beta | Core booking flow works; edge cases around conflict handling still being refined |
-| **Inventory** | 🧪 Beta | Stock tracking is functional but not yet feature-complete |
-| **Customers** | 🧪 Beta | Early implementation of customer profiles |
+| Module                |  Status | Notes                                                                                                                                                                                                                                                                     |
+| --------------------- | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Reservations**      | 🧪 Beta | Core booking flow works; edge cases around conflict handling are still being refined                                                                                                                                                                                      |
+| **Inventory**         | 🧪 Beta | Stock tracking is functional but not yet feature-complete                                                                                                                                                                                                                 |
+| **Customers**         | 🧪 Beta | Early implementation of customer profiles                                                                                                                                                                                                                                 |
+| **Role-based Access** | 🧪 Beta | Role assignment is fully server-controlled and cannot be self-elevated. Server-side route enforcement is still being completed, so a small number of manager-only pages remain directly accessible to authenticated staff, although sensitive write actions are protected |
 
-These modules are intentionally shipped as Beta rather than hidden — they work, but haven't been hardened to the same standard as the core modules.
 
 <br/>
 
@@ -503,10 +521,10 @@ These modules are intentionally shipped as Beta rather than hidden — they work
 
 | Role | Email | Password |
 |---|---|---|
-| Manager | `[email protected]` | `[insert-password]` |
-| Waiter | `[email protected]` | `[insert-password]` |
-| Kitchen Staff | `[email protected]` | `[insert-password]` |
-| Cashier | `[email protected]` | `[insert-password]` |
+| Manager | `qa_newuser_test@example.com` | `password123` |
+| Waiter | `alex@rest.com` | `password123` |
+| Kitchen Staff | `john@rest.com` | `password123` |
+| Cashier | `andrea@rest.com` | `password123` |
 
 <br/>
 
@@ -516,8 +534,8 @@ These modules are intentionally shipped as Beta rather than hidden — they work
 
 | Resource | Link |
 |---|---|
-| **GitHub Repository** | `[insert repository URL]` |
-| **Live Demo** | `[insert deployed URL]` |
+| **GitHub Repository** | `https://github.com/Hezron-lix/restaurantOS.git` |
+| **Live Demo** | `[[insert deployed URL]](https://restaurant-os-lix.vercel.app/)` |
 
 Deployed on **Vercel** — connect the repository, add the environment variables above, and deploy.
 
