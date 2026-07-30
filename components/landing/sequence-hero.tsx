@@ -11,8 +11,25 @@ import { ProgressIndicator } from "@/components/landing/progress-indicator";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 
+declare global {
+  interface Window {
+    __restoreHash?: string;
+  }
+}
+
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+  // Prevent native browser scroll restoration immediately
+  if ("scrollRestoration" in window.history) {
+    window.history.scrollRestoration = "manual";
+  }
+
+  // Temporarily strip the operations hash on initial load to prevent premature native jump
+  if (window.location.hash === "#operations") {
+    window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    window.__restoreHash = "#operations";
+  }
 }
 
 const FRAME_COUNT = 269;
@@ -60,6 +77,7 @@ export function SequenceHero() {
 
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const renderState = useRef({ frame: 0 });
+  const hasRestored = useRef(false);
 
   // 1. Preload frames
   useEffect(() => {
@@ -88,6 +106,27 @@ export function SequenceHero() {
       }
       images.push(img);
     }
+  }, []);
+
+  // Track scroll position for manual restoration during reloads
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
+    const handleScroll = () => {
+      sessionStorage.setItem("restaurantOS:landingScrollY", window.scrollY.toString());
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = "auto";
+      }
+    };
   }, []);
 
   // 2. Setup GSAP ScrollTrigger and Canvas Rendering
@@ -151,6 +190,33 @@ export function SequenceHero() {
           });
         },
       });
+
+      // Force calculate dimensions
+      ScrollTrigger.refresh();
+
+      // Single-owner scroll restoration
+      if (!hasRestored.current) {
+        hasRestored.current = true;
+
+        const hash = window.__restoreHash || window.location.hash;
+        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        const isReloadOrBack = navigation && (navigation.type === 'reload' || navigation.type === 'back_forward');
+
+        if (hash === "#operations") {
+          const section = document.getElementById("operations");
+          if (section) {
+            const targetTop = section.getBoundingClientRect().top + window.scrollY + 72;
+            window.scrollTo(0, targetTop);
+          }
+          window.history.replaceState(null, "", "#operations");
+        } else if (isReloadOrBack) {
+          const savedScroll = sessionStorage.getItem("restaurantOS:landingScrollY");
+          if (savedScroll) {
+            const scrollY = parseInt(savedScroll, 10);
+            window.scrollTo(0, scrollY);
+          }
+        }
+      }
 
       const handleResize = () => {
         canvas.width = window.innerWidth;
