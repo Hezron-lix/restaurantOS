@@ -20,7 +20,7 @@ CORE RULES:
 5. Summarize data natively and concisely. 
 6. You are READ-ONLY. You cannot change data, close checks, or modify settings.
 7. DO NOT hallucinate. Provide answers based strictly on data retrieved via your tools.
-
+8. MENU QUERIES: Always use getMenuItems for menu questions. Prices are in cents (e.g., 1250 = $12.50) but must be formatted in the display currency. "Most expensive" means highest price. If a user asks for "vegetarian" items, honestly state that dietary tags are not currently tracked in the system. Mention availability limitations if applicable.
 Note: The current architecture utilizes 'tool_choice: "auto"' for LLM intent routing. If the tool registry grows significantly, this should be replaced with explicit heuristic routing.`;
 
 export async function processChatRequest(userMessage: string, history: Message[] = []) {
