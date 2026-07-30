@@ -74,10 +74,18 @@ export function ProfileMenu({ userName, userRole }: ProfileMenuProps) {
               Theme
             </div>
             <div className="flex items-center justify-between px-1 mb-1">
-              <button onClick={() => setTheme('light')} className={cn("p-1.5 rounded-md flex-1 flex justify-center text-zinc-400 hover:text-zinc-100 hover:bg-white/5", theme === 'light' && "text-brand bg-brand/10")}>
+              <button
+                disabled
+                className="p-1.5 rounded-md flex-1 flex justify-center text-zinc-600 opacity-40 cursor-not-allowed"
+                title="Light mode disabled"
+              >
                 <Sun className="h-4 w-4" />
               </button>
-              <button onClick={() => setTheme('system')} className={cn("p-1.5 rounded-md flex-1 flex justify-center text-zinc-400 hover:text-zinc-100 hover:bg-white/5", theme === 'system' && "text-brand bg-brand/10")}>
+              <button
+                disabled
+                className="p-1.5 rounded-md flex-1 flex justify-center text-zinc-600 opacity-40 cursor-not-allowed"
+                title="System theme disabled"
+              >
                 <Monitor className="h-4 w-4" />
               </button>
               <button onClick={() => setTheme('dark')} className={cn("p-1.5 rounded-md flex-1 flex justify-center text-zinc-400 hover:text-zinc-100 hover:bg-white/5", theme === 'dark' && "text-brand bg-brand/10")}>

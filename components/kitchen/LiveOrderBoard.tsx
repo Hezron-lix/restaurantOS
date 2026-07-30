@@ -75,7 +75,7 @@ export function LiveOrderBoard({ initialOrders }: { initialOrders: Order[] }) {
       <GlassCard className={cn(
         "flex flex-col h-full border transition-all duration-300 relative overflow-hidden",
         isReady ? "border-emerald-500/30 bg-emerald-500/5" : (isUrgent ? "border-orange-500/50 bg-orange-500/5" : "border-white/10 bg-zinc-900/50"),
-        !isReady && "animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite]"
+        isUrgent && "animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite]"
       )}>
         <div className={cn(
           "px-4 py-3 border-b flex justify-between items-center",
