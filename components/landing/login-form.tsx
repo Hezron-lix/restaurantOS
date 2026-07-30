@@ -37,14 +37,23 @@ export function LoginForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [selectedDemoRole, setSelectedDemoRole] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
+
+  const selectDemoRole = (role: string, email: string, overridePassword?: string) => {
+    setSelectedDemoRole(role);
+    setValue("email", email);
+    setValue("password", overridePassword || "Password123!");
+    toast.info(`${role.charAt(0).toUpperCase() + role.slice(1)} demo selected — click Sign In to continue.`);
+  };
 
   const onSubmit = async (data: LoginInput) => {
     // react-hook-form sets isSubmitting=true for the duration of this async fn,
@@ -106,7 +115,7 @@ export function LoginForm() {
           </TextEffect>
         </h1>
         <p className="text-sm text-zinc-400 mb-8 font-light">
-          Sign in to access the RestaurantOS dashboard.
+          Sign in to access your RestaurantOS workspace.
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
@@ -211,6 +220,65 @@ export function LoginForm() {
           <Link href="/register" className="text-brand hover:text-brand/80 transition-colors">
             Sign Up
           </Link>
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-white/10">
+          <div className="flex flex-col items-center justify-center mb-4 gap-2">
+            <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider text-center">Demo Workflows</h3>
+            <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold bg-brand/10 text-brand border-brand/20">
+              Hackathon demo credentials
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => selectDemoRole("manager", "qa_newuser_test@example.com", "password123")}
+              className={`flex flex-col text-left p-3 rounded-xl border transition-all group ${
+                selectedDemoRole === "manager" 
+                  ? "bg-brand/10 border-brand/50 ring-1 ring-brand/30" 
+                  : "bg-zinc-900/40 border-white/5 hover:bg-zinc-800/60 hover:border-white/10"
+              }`}
+            >
+              <span className={`text-sm font-medium transition-colors ${selectedDemoRole === "manager" ? "text-brand" : "text-zinc-200 group-hover:text-brand"}`}>Manager</span>
+              <span className="text-xs text-zinc-500 mt-1">Available now: create a restaurant workspace and explore dashboard, analytics, staff, and settings.</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => selectDemoRole("waiter", "alex@rest.com")}
+              className={`flex flex-col text-left p-3 rounded-xl border transition-all group ${
+                selectedDemoRole === "waiter" 
+                  ? "bg-brand/10 border-brand/50 ring-1 ring-brand/30" 
+                  : "bg-zinc-900/40 border-white/5 hover:bg-zinc-800/60 hover:border-white/10"
+              }`}
+            >
+              <span className={`text-sm font-medium transition-colors ${selectedDemoRole === "waiter" ? "text-brand" : "text-zinc-200 group-hover:text-brand"}`}>Waiter</span>
+              <span className="text-xs text-zinc-500 mt-1">Workflow preview/Beta: tables, POS, and order placement.</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => selectDemoRole("kitchen", "john@rest.com")}
+              className={`flex flex-col text-left p-3 rounded-xl border transition-all group ${
+                selectedDemoRole === "kitchen" 
+                  ? "bg-brand/10 border-brand/50 ring-1 ring-brand/30" 
+                  : "bg-zinc-900/40 border-white/5 hover:bg-zinc-800/60 hover:border-white/10"
+              }`}
+            >
+              <span className={`text-sm font-medium transition-colors ${selectedDemoRole === "kitchen" ? "text-brand" : "text-zinc-200 group-hover:text-brand"}`}>Kitchen</span>
+              <span className="text-xs text-zinc-500 mt-1">Workflow preview/Beta: kitchen display and order preparation.</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => selectDemoRole("cashier", "andrea@rest.com")}
+              className={`flex flex-col text-left p-3 rounded-xl border transition-all group ${
+                selectedDemoRole === "cashier" 
+                  ? "bg-brand/10 border-brand/50 ring-1 ring-brand/30" 
+                  : "bg-zinc-900/40 border-white/5 hover:bg-zinc-800/60 hover:border-white/10"
+              }`}
+            >
+              <span className={`text-sm font-medium transition-colors ${selectedDemoRole === "cashier" ? "text-brand" : "text-zinc-200 group-hover:text-brand"}`}>Cashier</span>
+              <span className="text-xs text-zinc-500 mt-1">Workflow preview/Beta: billing and payment workflow.</span>
+            </button>
+          </div>
         </div>
       </div>
     </GlassCard>

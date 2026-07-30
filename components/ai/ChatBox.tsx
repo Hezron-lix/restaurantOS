@@ -162,22 +162,25 @@ export function ChatBox() {
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center px-4 max-w-2xl mx-auto w-full">
-            <div className="text-center mb-8">
+            <div className="text-center mb-8 flex flex-col items-center">
               <h3 className="text-2xl font-bold mb-3 text-foreground">Hello, {userName} 👋</h3>
               <p className="text-muted-foreground text-lg mb-2">
                 Welcome back to {restaurantName}.
               </p>
-              <p className="text-sm text-brand/80 font-medium">
-                Powered by your restaurant&apos;s live operational data.
+              <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-brand/10 text-brand border-brand/20 mb-6 mt-1">
+                Real time operational Intelligence
+              </span>
+              <p className="text-sm text-foreground/80 font-medium">
+                Try a live operational question
               </p>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
               {[
-                { icon: '📊', text: 'How is the restaurant doing?' },
-                { icon: '🍽️', text: 'Which tables are occupied?' },
-                { icon: '👨‍🍳', text: 'How busy is the kitchen?' },
-                { icon: '💰', text: "What are today's sales?" }
+                { icon: '📊', text: 'What are our top-selling items today?' },
+                { icon: '🍽️', text: 'Which tables are currently occupied?' },
+                { icon: '👨‍🍳', text: 'Is the kitchen load high right now?' },
+                { icon: '💲', text: 'What are the cheapest items on the menu?' }
               ].map((suggestion, i) => (
                 <button
                   key={i}
