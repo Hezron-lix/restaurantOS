@@ -151,9 +151,8 @@ export function SequenceHero() {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("pagehide", handlePageHide);
       window.removeEventListener("beforeunload", handlePageHide);
-      if ("scrollRestoration" in window.history) {
-        window.history.scrollRestoration = "auto";
-      }
+      // Do NOT reset scrollRestoration to "auto" here — the module-level code
+      // owns this setting for the lifetime of the landing-page bundle.
     };
   }, []);
 
@@ -196,8 +195,18 @@ export function SequenceHero() {
         ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
       };
 
-      // Initial render
-      renderFrame(0);
+      // Fix: Set canvas dimensions FIRST so GSAP measures the correct viewport
+      // and so the initial renderFrame has valid canvas.width/height.
+      // Calling handleResize() here also draws frame 0, making the separate
+      // renderFrame(0) call redundant — removed to avoid a double-draw flash.
+      const handleResize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        renderFrame(renderState.current.frame);
+      };
+
+      window.addEventListener("resize", handleResize);
+      handleResize(); // sets dims + draws frame 0
 
       // ScrollTrigger
       ScrollTrigger.create({
@@ -209,7 +218,7 @@ export function SequenceHero() {
         onUpdate: (self) => {
           setScrollProgress(self.progress);
           const frameIndex = Math.floor(self.progress * (FRAME_COUNT - 1));
-          
+
           requestAnimationFrame(() => {
             if (renderState.current.frame !== frameIndex) {
               renderState.current.frame = frameIndex;
@@ -219,10 +228,14 @@ export function SequenceHero() {
         },
       });
 
-      // Force calculate dimensions
+      // Force-recalculate all trigger positions with the pin spacer in place.
       ScrollTrigger.refresh();
 
-      // Single-owner scroll restoration
+      // Single-owner scroll restoration.
+      // Deferred by one requestAnimationFrame so the browser has committed the
+      // pin-spacer's 5000px layout extension before scrollTo is called.
+      // Without this deferral the browser clamps scrollY to ~0 because the
+      // scrollable height has not yet propagated to the compositor.
       if (!hasRestored.current) {
         hasRestored.current = true;
 
@@ -230,31 +243,22 @@ export function SequenceHero() {
         const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
         const isReloadOrBack = navigation && (navigation.type === 'reload' || navigation.type === 'back_forward');
 
-        if (hash === "#operations") {
-          const section = document.getElementById("operations");
-          if (section) {
-            const targetTop = section.getBoundingClientRect().top + window.scrollY + 72;
-            window.scrollTo(0, targetTop);
-          }
-          window.history.replaceState(null, "", "#operations");
-        } else if (isReloadOrBack && initialSavedScrollRef.current !== null) {
-          window.scrollTo(0, initialSavedScrollRef.current);
-        }
-
-        // Enable scroll position writer AFTER single restoration finishes
         requestAnimationFrame(() => {
+          if (hash === "#operations") {
+            const section = document.getElementById("operations");
+            if (section) {
+              const targetTop = section.getBoundingClientRect().top + window.scrollY + 72;
+              window.scrollTo(0, targetTop);
+            }
+            window.history.replaceState(null, "", "#operations");
+          } else if (isReloadOrBack && initialSavedScrollRef.current !== null) {
+            window.scrollTo(0, initialSavedScrollRef.current);
+          }
+
+          // Enable scroll-position saving only after restoration is complete.
           isBootingRef.current = false;
         });
       }
-
-      const handleResize = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        renderFrame(renderState.current.frame);
-      };
-      
-      window.addEventListener("resize", handleResize);
-      handleResize();
 
       return () => {
         window.removeEventListener("resize", handleResize);
