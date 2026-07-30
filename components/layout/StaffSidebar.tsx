@@ -18,7 +18,8 @@ import {
   Sparkles, 
   Settings,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  CreditCard
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sidebar, SidebarHeader, SidebarContent, SidebarFooter } from "@/components/layout/sidebar";
@@ -37,9 +38,10 @@ const PRIMARY_MODULES = [
 ] as const;
 
 const MANAGEMENT_MODULES = [
-  { name: "Reservations", href: "/reservations", icon: Calendar, permission: "manage:reservations" },
-  { name: "Inventory", href: "/inventory", icon: Box, permission: "manage:inventory" },
-  { name: "Customers", href: "/customers", icon: Contact, permission: "manage:customers" },
+  { name: "Billing", href: "/billing", icon: CreditCard, permission: "process:payments", status: "Beta" },
+  { name: "Reservations", href: "/reservations", icon: Calendar, permission: "manage:reservations", status: "Beta" },
+  { name: "Inventory", href: "/inventory", icon: Box, permission: "manage:inventory", status: "Beta" },
+  { name: "Customers", href: "/customers", icon: Contact, permission: "manage:customers", status: "Beta" },
 ] as const;
 
 export function StaffSidebar({ className }: { className?: string }) {
@@ -52,6 +54,7 @@ export function StaffSidebar({ className }: { className?: string }) {
     href: string;
     icon: React.ElementType;
     permission: string;
+    status?: string;
   };
 
   const renderNavItems = (items: readonly NavItem[]) => (
@@ -88,9 +91,16 @@ export function StaffSidebar({ className }: { className?: string }) {
             
             <span className={cn(
               "relative z-10 whitespace-nowrap transition-opacity duration-200",
-              isCollapsed ? "opacity-0 w-0 hidden" : "opacity-100"
+              isCollapsed ? "opacity-0 w-0 hidden" : "opacity-100 flex flex-col items-start"
             )}>
-              {item.name}
+              <span className="flex items-center gap-2">
+                {item.name}
+                {item.status && (
+                  <span className="text-[9px] uppercase tracking-wider font-bold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-1.5 py-0.5 rounded leading-none">
+                    {item.status}
+                  </span>
+                )}
+              </span>
             </span>
 
             {!hasAccess && !isCollapsed && (
@@ -124,12 +134,19 @@ export function StaffSidebar({ className }: { className?: string }) {
             "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium w-full text-text-secondary hover:text-text-primary hover:bg-surface-hover",
             pathname.startsWith("/settings") && "bg-brand/10 text-brand"
           )}
-          title={isCollapsed ? "Settings" : undefined}
+          title={isCollapsed ? "Restaurant Settings" : undefined}
         >
           <div className="flex items-center justify-center min-w-[20px]">
             <Settings className="w-[18px] h-[18px]" />
           </div>
-          {!isCollapsed && <span className="whitespace-nowrap">Settings</span>}
+          {!isCollapsed && (
+            <span className="whitespace-nowrap flex items-center gap-2">
+              Restaurant Settings
+              <span className="text-[9px] uppercase tracking-wider font-bold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-1.5 py-0.5 rounded leading-none">
+                Beta
+              </span>
+            </span>
+          )}
         </Link>
         
         <button

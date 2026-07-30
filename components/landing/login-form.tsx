@@ -115,7 +115,7 @@ export function LoginForm() {
           </TextEffect>
         </h1>
         <p className="text-sm text-zinc-400 mb-8 font-light">
-          Sign in to access your RestaurantOS workspace.
+          Sign in to access your RestaurantOS workspace as the manager.
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>

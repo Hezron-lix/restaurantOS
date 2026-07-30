@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { LogOut, Settings, User, Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -95,10 +96,19 @@ export function ProfileMenu({ userName, userRole }: ProfileMenuProps) {
           </div>
 
           <div className="p-1.5 border-t border-border/50">
-            <button className="w-full flex items-center gap-2 px-2 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 rounded-md transition-colors">
-              <Settings className="h-4 w-4" />
-              Account Settings
-            </button>
+            <Link 
+              href="/settings"
+              onClick={() => setIsOpen(false)}
+              className="w-full flex items-center justify-between px-2 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 rounded-md transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Restaurant Settings
+              </div>
+              <span className="text-[9px] uppercase tracking-wider font-bold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-1.5 py-0.5 rounded leading-none">
+                BETA
+              </span>
+            </Link>
             <button 
               onClick={handleSignOut}
               disabled={signingOut}
