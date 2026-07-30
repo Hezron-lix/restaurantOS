@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -102,26 +102,20 @@ export function SequenceHero() {
 
   // ── Boot overlay state ────────────────────────────────────────────────────
   // bootComplete: single source of truth set at the END of scroll restoration.
-  // showBootOverlay: derived visibility, respects MIN_BOOT_VISIBLE duration.
+  // showBootOverlay: initialized to true via isInitialPageLoad so Next.js SSR
+  // includes the fixed full-screen overlay directly in the initial server HTML.
   const [bootComplete, setBootComplete] = useState(false);
-  const [showBootOverlay, setShowBootOverlay] = useState(false);
+  const [showBootOverlay, setShowBootOverlay] = useState(() => isInitialPageLoad);
   const bootOverlayShownAtRef = useRef<number | null>(null);
   const prevBodyOverflowRef = useRef("");
 
-  // Mount the overlay synchronously before the browser's first paint.
-  // useLayoutEffect fires after DOM commit but before any compositing, so
-  // users never see the GSAP pin-spacer insertion or scroll-restoration jump.
-  //
-  // isInitialPageLoad prevents this from triggering on client-side navigations
-  // (where the JS module is already in memory and isInitialPageLoad === false).
-  useLayoutEffect(() => {
-    if (!isInitialPageLoad) return;
-    isInitialPageLoad = false;
+  // Lock body scroll and record mount time as soon as the overlay is active
+  useEffect(() => {
+    if (!showBootOverlay) return;
     prevBodyOverflowRef.current = document.body.style.overflow ?? "";
     document.body.style.overflow = "hidden";
     bootOverlayShownAtRef.current = Date.now();
-    setShowBootOverlay(true);
-  }, []);
+  }, [showBootOverlay]);
 
   // Dismiss the overlay once boot is complete, enforcing MIN_BOOT_VISIBLE so
   // it is never visible for only a single frame.
@@ -135,6 +129,7 @@ export function SequenceHero() {
     const timer = setTimeout(() => {
       setShowBootOverlay(false);
       document.body.style.overflow = prevBodyOverflowRef.current;
+      isInitialPageLoad = false;
     }, remaining);
     return () => clearTimeout(timer);
   }, [bootComplete, showBootOverlay]);
@@ -501,10 +496,11 @@ export function SequenceHero() {
 
       {/* ── Boot overlay ────────────────────────────────────────────────────
           Fixed full-screen; sits above everything (z-[9999]).
-          Mounted via useLayoutEffect before the browser's first paint so the
-          GSAP pin-spacer insertion, canvas initialization, and scroll
-          restoration are never visible. Released only after setBootComplete
-          fires inside the final restoration requestAnimationFrame.
+          Rendered directly in the initial server HTML (SSR) so the browser
+          paints the black overlay on frame 0 before any JS execution, canvas
+          preloading, GSAP pin-spacer creation, or scroll restoration.
+          Released only after setBootComplete fires inside the final restoration
+          requestAnimationFrame.
           ─────────────────────────────────────────────────────────────────── */}
       <AnimatePresence>
         {showBootOverlay && (
