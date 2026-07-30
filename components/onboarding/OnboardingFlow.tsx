@@ -142,12 +142,12 @@ export function OnboardingFlow() {
           return (
             <div key={step.id} className="relative z-[2] flex flex-col items-center gap-2">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ring-4 ring-zinc-950 ${
                   isActive
                     ? "bg-brand text-brand-foreground shadow-[0_0_15px_-3px_rgba(234,179,8,0.5)] scale-110"
                     : isCompleted
-                      ? "bg-brand/20 text-brand border border-brand/30"
-                      : "bg-zinc-900 border border-white/10 text-zinc-500"
+                      ? "bg-[#241e0b] text-brand border border-brand/50"
+                      : "bg-zinc-950 border border-white/10 text-zinc-500"
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -181,7 +181,7 @@ export function OnboardingFlow() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-zinc-300">Phone</label>
-                      <Input {...register("phone")} placeholder="+91 98765 43210" className="bg-zinc-900/50" />
+                      <Input {...register("phone")} type="tel" placeholder="+91 98765 43210" className="bg-zinc-900/50" />
                       {errors.phone && <p className="text-xs text-destructive">{errors.phone.message as string}</p>}
                     </div>
                     <div className="space-y-2">

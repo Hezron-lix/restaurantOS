@@ -1,8 +1,13 @@
 import { z } from 'zod';
 
+export const PHONE_REGEX = /^\+?[0-9\s\-\(\)]{7,20}$/;
+
 export const restaurantInfoSchema = z.object({
   name: z.string().min(2, "Restaurant name is required"),
-  phone: z.string().min(5, "Valid phone number is required"),
+  phone: z
+    .string()
+    .min(1, "Phone number is required")
+    .regex(PHONE_REGEX, "Invalid phone number format"),
   email: z.string().email("Valid email is required"),
 });
 
