@@ -168,26 +168,27 @@ export function SequenceHero() {
     { dependencies: [loaded], scope: containerRef }
   );
 
-  // Calculate active story stage
-  const stageProgress = (scrollProgress * STORY_STAGES.length) % 1;
   const stageIndex = Math.min(
     Math.floor(scrollProgress * STORY_STAGES.length),
     STORY_STAGES.length - 1
   );
   const activeStage = STORY_STAGES[stageIndex];
-  const isFirstStage = stageIndex === 0;
-  const isLastStage = stageIndex === STORY_STAGES.length - 1;
 
-  let containerOpacity = 1;
-  let containerTranslateY = 0;
-  if (isFirstStage) {
-    containerOpacity = Math.max(0, 1 - stageProgress * 1.5);
-  } else if (isLastStage) {
-    // Fade out and translate down gently over the second half of the final stage
-    const fadeProgress = Math.max(0, (stageProgress - 0.5) * 2);
-    containerOpacity = 1 - fadeProgress;
-    containerTranslateY = fadeProgress * 20; // 20px downward ease
-  }
+  const handleCTAClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const section = document.getElementById("operations");
+    if (!section) return;
+
+    // Target the section top boundary with +72px offset to position the content 72px upward
+    const targetTop = section.getBoundingClientRect().top + window.scrollY + 72;
+
+    window.scrollTo({
+      top: targetTop,
+      behavior: "smooth",
+    });
+
+    window.history.pushState(null, "", "#operations");
+  };
 
   return (
     <div ref={containerRef} className="relative h-screen w-full bg-black overflow-hidden flex flex-col justify-center">
@@ -219,10 +220,6 @@ export function SequenceHero() {
           {/* Narrative Storytelling Elements */}
           <div 
             className="absolute inset-0 flex flex-col justify-start px-6 md:px-32 max-w-7xl mx-auto z-10 pointer-events-none md:pl-64 pt-[15vh] md:pt-[22vh] transition-opacity duration-300"
-            style={{ 
-              opacity: containerOpacity,
-              transform: `translateY(${containerTranslateY}px)`
-            }}
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -264,7 +261,7 @@ export function SequenceHero() {
                     transition={{ delay: 1, duration: 0.8 }}
                     className="mt-24"
                   >
-                    <a href="#features">
+                    <a href="#operations" onClick={handleCTAClick}>
                       <Button size="lg" className="glow-brand group text-base h-14 px-10 text-white shadow-[0_0_40px_rgba(234,179,8,0.3)]">
                         See RestaurantOS in Action
                         <ArrowRight className="ml-3 size-5 transition-transform group-hover:translate-x-1" />
