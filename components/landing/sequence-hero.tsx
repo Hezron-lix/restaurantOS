@@ -78,6 +78,21 @@ export function SequenceHero() {
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const renderState = useRef({ frame: 0 });
   const hasRestored = useRef(false);
+  const isBootingRef = useRef(true);
+  const initialSavedScrollRef = useRef<number | null>(null);
+
+  // Read saved scroll position ONCE on component mount before any scroll listener is attached
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const saved = sessionStorage.getItem("restaurantOS:landingScrollY");
+    if (saved !== null) {
+      const parsed = parseInt(saved, 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        initialSavedScrollRef.current = parsed;
+      }
+    }
+  }, []);
 
   // 1. Preload frames
   useEffect(() => {
@@ -108,7 +123,7 @@ export function SequenceHero() {
     }
   }, []);
 
-  // Track scroll position for manual restoration during reloads
+  // Track scroll position for manual restoration during reloads (gated during boot/restoration)
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -117,12 +132,25 @@ export function SequenceHero() {
     }
 
     const handleScroll = () => {
+      // Ignore premature scroll events to 0 during boot/hydration
+      if (isBootingRef.current) return;
       sessionStorage.setItem("restaurantOS:landingScrollY", window.scrollY.toString());
     };
 
-    window.addEventListener("scroll", handleScroll);
+    const handlePageHide = () => {
+      if (!isBootingRef.current) {
+        sessionStorage.setItem("restaurantOS:landingScrollY", window.scrollY.toString());
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("pagehide", handlePageHide);
+    window.addEventListener("beforeunload", handlePageHide);
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("pagehide", handlePageHide);
+      window.removeEventListener("beforeunload", handlePageHide);
       if ("scrollRestoration" in window.history) {
         window.history.scrollRestoration = "auto";
       }
@@ -209,13 +237,14 @@ export function SequenceHero() {
             window.scrollTo(0, targetTop);
           }
           window.history.replaceState(null, "", "#operations");
-        } else if (isReloadOrBack) {
-          const savedScroll = sessionStorage.getItem("restaurantOS:landingScrollY");
-          if (savedScroll) {
-            const scrollY = parseInt(savedScroll, 10);
-            window.scrollTo(0, scrollY);
-          }
+        } else if (isReloadOrBack && initialSavedScrollRef.current !== null) {
+          window.scrollTo(0, initialSavedScrollRef.current);
         }
+
+        // Enable scroll position writer AFTER single restoration finishes
+        requestAnimationFrame(() => {
+          isBootingRef.current = false;
+        });
       }
 
       const handleResize = () => {
