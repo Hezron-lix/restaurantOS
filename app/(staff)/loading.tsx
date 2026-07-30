@@ -1,22 +1,23 @@
+import { ChefHat } from "lucide-react";
+
 export default function StaffLoading() {
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6 animate-pulse">
-      <div className="mb-8 space-y-2">
-        <div className="h-8 bg-zinc-800 rounded w-1/4"></div>
-        <div className="h-4 bg-zinc-800/50 rounded w-1/3"></div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="h-24 bg-zinc-800/50 rounded-xl border border-white/5"></div>
-        <div className="h-24 bg-zinc-800/50 rounded-xl border border-white/5"></div>
-        <div className="h-24 bg-zinc-800/50 rounded-xl border border-white/5"></div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        <div className="lg:col-span-2 h-96 bg-zinc-800/30 rounded-xl border border-white/5"></div>
-        <div className="space-y-6">
-          <div className="h-48 bg-zinc-800/30 rounded-xl border border-white/5"></div>
-          <div className="h-48 bg-zinc-800/30 rounded-xl border border-white/5"></div>
+    <div className="flex flex-col items-center justify-center min-h-[75vh] w-full bg-black text-zinc-50 relative overflow-hidden px-6">
+      {/* Subtle ambient orange glow behind the chef hat */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand/5 blur-[80px] rounded-full pointer-events-none animate-pulse-slow" />
+      
+      <div className="relative flex flex-col items-center gap-6 z-10">
+        <div className="p-5 rounded-3xl bg-zinc-950/40 border border-brand/20 shadow-[0_0_40px_rgba(234,179,8,0.08)] animate-float">
+          <ChefHat className="size-16 text-brand" />
+        </div>
+        
+        <div className="flex flex-col items-center gap-2">
+          <h2 className="text-xl font-medium tracking-wide text-zinc-200 animate-pulse-slow">
+            Cooking...
+          </h2>
+          <p className="text-xs text-zinc-500 font-mono tracking-widest uppercase">
+            Preparing your workspace
+          </p>
         </div>
       </div>
     </div>
