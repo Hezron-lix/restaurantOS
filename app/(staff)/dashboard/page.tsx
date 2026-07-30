@@ -18,15 +18,27 @@ export default async function DashboardPage() {
     redirect('/login');
   }
 
-  // Get user's profile to find their restaurant_id
+  // Get user's profile to find their restaurant_id and role
   const { data: profile } = await supabase
     .from('profiles')
-    .select('restaurant_id')
+    .select('restaurant_id, role')
     .eq('id', user.id)
     .single();
 
   if (!profile?.restaurant_id) {
     redirect('/onboarding');
+  }
+
+  // Redirect non-manager roles away from the dashboard to their primary page.
+  // Fires before any admin-client queries so redirected users pay no DB cost.
+  const roleRedirects: Partial<Record<string, string>> = {
+    kitchen: '/kitchen',
+    cashier: '/billing',
+    waiter: '/tables',
+  };
+  const roleDestination = roleRedirects[profile.role ?? ''];
+  if (roleDestination) {
+    redirect(roleDestination);
   }
 
   const admin = createAdminSupabaseClient();
@@ -44,7 +56,7 @@ export default async function DashboardPage() {
     .from('tables')
     .select('id, status')
     .eq('restaurant_id', profile.restaurant_id);
-    
+
   const tables = tablesData || [];
   const totalTablesCount = tables.length;
   const occupiedTablesCount = tables.filter(t => t.status !== 'AVAILABLE').length;
@@ -57,7 +69,7 @@ export default async function DashboardPage() {
     .gt('total_cents', 0)
     .order('created_at', { ascending: false })
     .limit(5);
-    
+
   const recentOrders = (recentOrdersData || []).map(o => ({
     id: o.id,
     table_number: (o.tables as unknown as { table_number: number } | null)?.table_number,
@@ -65,28 +77,28 @@ export default async function DashboardPage() {
     total_cents: o.total_cents,
     created_at: o.created_at
   }));
-  
+
   // Kitchen active tickets (PREPARING, READY)
   const { data: kitchenOrders } = await admin
     .from('orders')
     .select('id')
     .eq('restaurant_id', profile.restaurant_id)
     .in('status', ['PREPARING', 'READY']);
-    
+
   const activeTicketsCount = kitchenOrders?.length || 0;
   const activeOrdersCount = activeTicketsCount;
-  
+
   // Calculate today's revenue (only completed/billed/served orders count as realized revenue)
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   const { data: todayOrders } = await admin
     .from('orders')
     .select('total_cents')
     .eq('restaurant_id', profile.restaurant_id)
     .in('status', ['BILLED', 'SERVED'])
     .gte('created_at', today.toISOString());
-    
+
   const revenueTodayCents = (todayOrders || []).reduce((sum, o) => sum + (o.total_cents || 0), 0);
   const revenueToday = revenueTodayCents;
 
@@ -97,7 +109,7 @@ export default async function DashboardPage() {
     .eq('restaurant_id', profile.restaurant_id)
     .order('created_at', { ascending: false })
     .limit(10);
-    
+
   const activities = activitiesData || [];
 
   return (
@@ -108,7 +120,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Top Summary Row */}
-      <SummaryRow 
+      <SummaryRow
         activeOrdersCount={activeOrdersCount}
         occupiedTablesCount={occupiedTablesCount}
         totalTablesCount={totalTablesCount}

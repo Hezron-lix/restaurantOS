@@ -1,6 +1,6 @@
 /**
  * Staff Layout — Authenticated shell for all operational staff consoles.
- * Routes: /waiter, /kitchen, /cashier, /manager
+ * Routes: /waiter, /kitchen, /billing, /manager
  *
  * Fetches the current session server-side and passes profile data to StaffHeader.
  * Unauthenticated users are redirected by middleware before reaching this layout.

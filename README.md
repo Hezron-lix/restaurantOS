@@ -512,6 +512,7 @@ npm run demo:reset
 | Customers | 🧪 Beta | Placeholder module. Customer profiles, loyalty, and CRM capabilities are planned for a future update. |
 | Role-based Access | 🧪 Beta | Role assignment is fully server-controlled and cannot be self-elevated. Server-side route enforcement is still being completed, so a small number of manager-only pages remain directly accessible to authenticated staff, although sensitive write actions are protected. |
 | Staff Onboarding | 🧪 Beta | New staff accounts are created by managers with a fixed initial password and no email notification. Suitable for demo purposes, but a secure invitation and credential setup flow is planned before production release. |
+| Cashier | 🧪 Beta | Placeholder module — UI scaffold in place, payment processing not yet implemented |
 
 <br/>
 
