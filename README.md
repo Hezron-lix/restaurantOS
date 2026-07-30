@@ -36,8 +36,25 @@ This is **not** a food-delivery app. It's internal infrastructure — built for 
 
 ---
 
+## 📝 Evaluation Notes for Judges
+
+- ✅ Email & Password authentication — working
+- ✅ Google OAuth — working
+- ⚠️ OTP authentication — not part of the primary flow for this build; Email/Password and Google OAuth are the supported methods
+- ✅ Role-based access control (UI + Server Actions + PostgreSQL RLS)
+- ✅ Real-time sync across staff devices (Supabase Realtime)
+- ✅ AI Copilot grounded in live restaurant data
+- 🧪 Billing / Cashier module is a UI scaffold — payment processing is not yet implemented
+
+All Beta modules are labeled in-app and above — they reflect our roadmap, not the current production surface.
+
+<br/>
+
+---
+
 ## 📖 Table of Contents
 
+- [Evaluation Notes for Judges](#-evaluation-notes-for-judges)
 - [The Problem](#-the-problem)
 - [The Solution](#-the-solution)
 - [Key Features](#-key-features)
@@ -94,8 +111,7 @@ RestaurantOS is a **single, unified platform** covering the full restaurant oper
 
 **Core Operations**
 - 📊 Live Dashboard
-- 🧾 Point of Sale (POS)
-- 🪑 Table Management
+- 🪑 Table Management and Point of Sale (POS)
 - 👨‍🍳 Kitchen Display System
 - 🍽️ Menu Management
 - 📦 Order Management
@@ -177,15 +193,16 @@ Revenue, order volume, and performance trends in one dashboard — no spreadshee
 | **Authentication** | ✅ Live | Email login/registration, Google OAuth, secure sessions, guided onboarding |
 | **Dashboard** | ✅ Live | Live KPIs, revenue snapshot, table/order overview, quick actions, activity feed |
 | **Menu Management** | ✅ Live | Categories, items, availability toggles, pricing |
-| **Table Management** | ✅ Live | Live table status (available / occupied / dirty), QR-ready architecture |
-| **POS** | ✅ Live | Create orders, add items and quantities, send directly to kitchen |
+| **Table Management** | ✅ Live | Live table status (available / occupied / dirty), Create orders, add items and quantities, send directly to kitchen |
 | **Kitchen Display** | ✅ Live | Live order queue across preparing → ready → served |
 | **Order Management** | ✅ Live | Full order history and status tracking |
+| **Staff Management** | ✅ Live | Managers can add staff and assign roles (see Known Limitations for onboarding flow) |
 | **Analytics** | ✅ Live | Revenue and operational metrics, restaurant-level insights |
 | **AI Copilot** | ✅ Live | Tool-based restaurant assistant grounded in live data |
 | **Reservations** | 🧪 Beta | Placeholder module — UI scaffold in place, full booking workflow not yet implemented |
 | **Inventory** | 🧪 Beta | Placeholder module — UI scaffold in place, stock tracking not yet implemented |
 | **Customers** | 🧪 Beta | Placeholder module — UI scaffold in place, customer profiles not yet implemented |
+| **Billing** | 🧪 Beta | UI scaffold only — payment processing is not yet implemented |
 
 <br/>
 
@@ -197,7 +214,7 @@ Revenue, order volume, and performance trends in one dashboard — no spreadshee
 flowchart TD
     subgraph Client["🖥️ Client (Staff Devices)"]
         A[Dashboard]
-        B[POS]
+        B[Tables]
         C[Kitchen Display]
         D[Analytics]
         E[AI Copilot]
@@ -296,7 +313,6 @@ restaurant-os/
 │   ├── (public)/             # Landing, login, register
 │   ├── (staff)/               # Authenticated staff console
 │   │   ├── dashboard/
-│   │   ├── pos/
 │   │   ├── kitchen/
 │   │   ├── tables/
 │   │   ├── menu/
@@ -305,6 +321,7 @@ restaurant-os/
 │   │   ├── reservations/      # Beta
 │   │   ├── inventory/         # Beta
 │   │   └── customers/         # Beta
+│   │   └── billing/           # Beta
 │   ├── api/                  # Route handlers (AI chat, auth callback)
 │   └── actions/               # Server Actions ("the backend")
 ├── components/                # UI components by domain
@@ -418,7 +435,7 @@ npm run demo:reset
 <img width="1917" height="968" alt="image" src="https://github.com/user-attachments/assets/fe1adef2-eb43-4cb0-bdf1-13f2feeef8ac" />
 
 
-> 📷 **POS Screen** 
+> 📷 **Table and POS Screen** 
 
 
 <img width="1917" height="963" alt="image" src="https://github.com/user-attachments/assets/64d9a1fa-c87b-4a55-ab3a-e0185a84e0fe" />
@@ -503,31 +520,36 @@ npm run demo:reset
 
 ---
 
-## ⚠️ Beta Features & Current Limitations
+## ⚠️ Beta Features & Known Limitations
 
-| Feature | Status | Notes |
-|---------|:------:|------|
-| Reservations | 🧪 Beta | Placeholder module. UI is available, but full reservation workflow and backend integration are planned for a future release. |
-| Inventory | 🧪 Beta | Placeholder module. Inventory tracking, stock management, and supplier workflows are planned but not yet implemented. |
-| Customers | 🧪 Beta | Placeholder module. Customer profiles, loyalty, and CRM capabilities are planned for a future update. |
-| Role-based Access | 🧪 Beta | Role assignment is fully server-controlled and cannot be self-elevated. Server-side route enforcement is still being completed, so a small number of manager-only pages remain directly accessible to authenticated staff, although sensitive write actions are protected. |
-| Staff Onboarding | 🧪 Beta | New staff accounts are created by managers with a fixed initial password and no email notification. Suitable for demo purposes, but a secure invitation and credential setup flow is planned before production release. |
-| Cashier | 🧪 Beta | Placeholder module — UI scaffold in place, payment processing not yet implemented |
+| Feature              |  Status   | Notes                                                                 |
+| --------------------- | :-------: | ----------------------------------------------------------------------- |
+| Reservations           | 🧪 Beta   | Backend conflict-checking logic exists; UI is a placeholder scaffold.  |
+| Inventory               | 🧪 Beta   | Database schema exists; no UI workflow yet.                             |
+| Customers               | 🧪 Beta   | Placeholder module; no CRM logic implemented.                          |
+| Cashier / Billing       | 🧪 Beta   | UI scaffold only — payment processing is not yet implemented.        |
+| Staff Onboarding        | 🧪 Beta   | New staff are created with a fixed default password (`Password123!`) and no email invite flow. Fine for demo purposes; a real invite + reset flow is needed before production. |
+| Manager-only route guarding | 🧪 Beta | Sensitive **actions** are fully protected server-side, but a few manager-only **pages** aren't yet blocked at the route level for other authenticated roles. |
+
 
 <br/>
 
 ---
 
-## 🔐 Demo Credentials
+## 🔐 Demo Credentials (Choose a Role)
 
-> Recommended login for judges. This account has full access to RestaurantOS and Restaurant Copilot.
+> ⭐ **Manager account is recommended for judges** — it has full access to every module, including the AI Copilot.
 
-| Role | Email | Password |
-|---|---|---|
-| Manager | `qa_newuser_test@example.com` | `password123` |
-| Waiter | `alex@rest.com` | `Password123!` |
-| Kitchen Staff | `john@rest.com` | `Password123!` |
-| Cashier | `andrea@rest.com` | `Password123!` |
+The login page includes one-click demo cards. Clicking a card fills in the credentials — it does **not** auto-submit, so you can see exactly which account you're signing into before continuing.
+
+| Role                          | Email                          | Password        | Access                                  |
+| ------------------------------ | ------------------------------- | ---------------- | ---------------------------------------- |
+| ⭐ **Manager** (recommended)    | `qa_newuser_test@example.com`  | `password123`     | Full platform: Dashboard, AI Copilot, Analytics, Staff, all modules |
+| Waiter                         | `alex@rest.com`                | `Password123!`    | Tables, POS, Order creation             |
+| Kitchen Staff                  | `john@rest.com`                | `Password123!`    | Kitchen Display System (KDS)            |
+| Cashier                        | `andrea@rest.com`              | `Password123!`    | Billing workspace (preview only)        |
+
+> ℹ️ Each role is redirected to its own workspace on login (Manager → Dashboard, Waiter → Tables, Kitchen → KDS, Cashier → Billing) — this is intentional role-based routing, not a bug. Use the **Manager** account if you want to explore the whole system in one session.
 
 > ⚠️ Note: the Manager account uses a different password format (`password123`) than the Waiter/Kitchen/Cashier accounts (`Password123!`) — this is expected, since the Manager account was self-registered through normal onboarding, while staff accounts are created by the manager with a fixed system password. See **Staff Onboarding** in Known Limitations.
 
