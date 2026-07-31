@@ -487,7 +487,11 @@ npm run demo:reset
 
 <img width="800" height="450" alt="ProductWalkthrough-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/e213bbe4-ca04-4977-ab9e-2634b8b5a716" />
 
+>
 
+<img width="800" height="450" alt="Untitled design" src="https://github.com/user-attachments/assets/0e6ef47a-9ba4-4744-97db-e045eb003d4d" />
+
+>
 
 </div>
 
