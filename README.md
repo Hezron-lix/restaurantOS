@@ -429,49 +429,57 @@ npm run demo:reset
 ## 📸 Screenshots & Demo
 
 
-> 📷 **Dashboard Overview**
+> 
+📷 **Dashboard Overview**
 
 
 <img width="1917" height="968" alt="image" src="https://github.com/user-attachments/assets/fe1adef2-eb43-4cb0-bdf1-13f2feeef8ac" />
 
 
-> 📷 **Table and POS Screen** 
+> 
+📷 **Table and POS Screen** 
 
 
 <img width="1917" height="963" alt="image" src="https://github.com/user-attachments/assets/64d9a1fa-c87b-4a55-ab3a-e0185a84e0fe" />
 
 
-> 📷 **Kitchen Display**
+> 
+📷 **Kitchen Display**
 
 
 <img width="1917" height="971" alt="image" src="https://github.com/user-attachments/assets/32319056-1a5d-482d-94c1-b78d4d0ed004" />
 
 
-> 📷 **AI Copilot**
+> 
+📷 **AI Copilot**
 
 
 <img width="1917" height="975" alt="image" src="https://github.com/user-attachments/assets/1e796198-e2ce-4709-acee-042a6647ccc1" />
 
 
-> 📷 **Menu Management** 
+> 
+📷 **Menu Management** 
 
 
 <img width="1917" height="972" alt="image" src="https://github.com/user-attachments/assets/222671f3-74fa-4d34-981d-3fcd0132a5ee" />
 
 
-> 📷 **Analytics**
+> 
+📷 **Analytics**
 
 
 <img width="1917" height="972" alt="image" src="https://github.com/user-attachments/assets/0863fb85-2811-4b6f-a909-4beb37b08ef6" />
 
 
-> 📷 **Authentication**
+> 
+📷 **Authentication**
 
 
 <img width="1917" height="970" alt="image" src="https://github.com/user-attachments/assets/42a1ee0f-433a-4b7f-b72b-d73a71fa5d76" />
 
 
-> 📷 **Table Management**
+> 
+📷 **Table Management**
 
  
 <img width="1917" height="971" alt="image" src="https://github.com/user-attachments/assets/be7afdb5-39f6-40f6-a30e-9c11f04c0646" />
@@ -488,6 +496,7 @@ npm run demo:reset
 <img width="800" height="450" alt="ProductWalkthrough-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/e213bbe4-ca04-4977-ab9e-2634b8b5a716" />
 
 >
+**🎬 Restaurant Copilot Walkthrough GIF**
 
 <img width="800" height="450" alt="Untitled design" src="https://github.com/user-attachments/assets/0e6ef47a-9ba4-4744-97db-e045eb003d4d" />
 
