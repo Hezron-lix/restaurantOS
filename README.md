@@ -18,15 +18,15 @@
 [![Google Gemini](https://img.shields.io/badge/Gemini-AI-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](#-license)
 
-<br/>
-
-**Built for VibeAthon 6.0** — *Smart Restaurant Management System*
-
 </div>
 
+---
 <br/>
 
-> **"Restaurants don't need more software. They need one system that actually talks to itself."**
+> 🏆 **Built during the 72-hour Vibeathon 6.0 Architecture Sprint. Selected for Phase 2 Deployment out of a competitive national pool of 2,500+ participants across 400+ colleges.**
+<br/>
+
+**"Restaurants don't need more software. They need one system that actually talks to itself."**
 
 RestaurantOS replaces the patchwork of disconnected tools — a POS here, a spreadsheet there, a group chat for the kitchen — with a single, real-time operating system for restaurant staff. Tables, orders, kitchen tickets, analytics, and an AI copilot all read and write to the same source of truth, so nothing gets lost between the front of house and the back.
 
